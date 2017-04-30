@@ -34,6 +34,72 @@ rbind.tbl_spark <- function(..., deparse.level = 1, name = random_string("sparkl
   sdf_register(sdf, name = name)
 }
 
+#' @export
+#' @importFrom dplyr distinct
+#' @importFrom dplyr setdiff
+#' @importFrom rlang sym
+#' @importFrom rlang :=
+sdf_bind_rows <- function(..., id = NULL) {
+  dots <- rlang::dots_splice(...)
+  if (! (dots %>%
+           sapply(function(x) inherits(x, "tbl_spark")) %>%
+           all()))
+    stop("all inputs must be tbl_spark")
+
+  n <- length(dots)
+  self <- dots[[1]]
+
+  if (n == 1)
+    return(self)
+
+  schemas <- lapply(dots, function(x) {
+    x %>%
+      sdf_schema() %>%
+      lapply(dplyr::as_data_frame) %>%
+      bind_rows()
+  })
+
+  schema_complements <- schemas %>%
+    lapply(function(x) setdiff(schemas %>%
+                                 dplyr::bind_rows() %>%
+                                 distinct(), x))
+
+  sdf_augment <- function(x, schema_complement) {
+    sdf <- spark_dataframe(x)
+    if (nrow(schema_complement) > 0L) {
+      for (i in 1:nrow(schema_complement)) {
+        new_col <- invoke_static(
+          sc,
+          "org.apache.spark.sql.functions",
+          "lit",
+          NA
+        ) %>%
+          invoke("cast", schema_complement$type[i])
+
+        sdf <- sdf %>%
+          invoke("withColumn", schema_complement$name[i], new_col)
+      }
+    }
+    sdf
+  }
+
+  augmented_dots <- Map(sdf_augment, dots, schema_complements) %>%
+    lapply(sdf_register)
+
+  if (!is.null(id)) {
+    id <- ensure_scalar_character(id)
+    labels <- if (any(names(dots) == ""))
+      as.character(seq_along(dots)) else names(dots)
+    augmented_dots <- Map(
+      function(x, label) mutate(x, !!! sym(id) := label),
+      augmented_dots,
+      labels
+    )
+  }
+
+  do.call(rbind, augmented_dots)
+}
+
 #' @rawNamespace S3method(cbind,tbl_spark)
 cbind.tbl_spark <- function(..., deparse.level = 1, name = random_string("sparklyr_tmp_")) {
   dots <- list(...)
