@@ -5,6 +5,3 @@ dim.tbl_spark <- function(x) {
   columns <- invoke(sdf, "columns")
   c(rows, length(columns))
 }
-
-#' @export
-is.tbl_spark <- function(x) inherits(x, "tbl_spark")

@@ -18,9 +18,9 @@
 #'   When column-binding, rows are matched by position, so all data
 #'   frames must have the same number of rows. To match by value, not
 #'   position, see [join].
-#' @param .id Data frame identifier.
+#' @param id Data frame identifier.
 #'
-#'   When `.id` is supplied, a new column of identifiers is
+#'   When `id` is supplied, a new column of identifiers is
 #'   created to link each row to its original Spark DataFrame. The labels
 #'   are taken from the named arguments to `bind_rows()`. When a
 #'   list of Spark DataFrames is supplied, the labels are taken from the
@@ -75,7 +75,7 @@ rbind.tbl_spark <- function(..., deparse.level = 1, name = random_string("sparkl
 sdf_bind_rows <- function(..., id = NULL) {
   id <- ensure_scalar_character(id, allow.null = TRUE)
   dots <- Filter(length, rlang::dots_splice(...))
-  if (! all(sapply(dots, is.tbl_spark)))
+  if (! all(sapply(dots, function(x) inherits(x, "tbl_spark"))))
     stop("all inputs must be tbl_spark")
 
   n <- length(dots)

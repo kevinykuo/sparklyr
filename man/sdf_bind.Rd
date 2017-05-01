@@ -20,9 +20,9 @@ sdf_bind_rows(..., id = NULL)
   frames must have the same number of rows. To match by value, not
   position, see [join].}
 
-\item{.id}{Data frame identifier.
+\item{id}{Data frame identifier.
 
-  When `.id` is supplied, a new column of identifiers is
+  When `id` is supplied, a new column of identifiers is
   created to link each row to its original Spark DataFrame. The labels
   are taken from the named arguments to `bind_rows()`. When a
   list of Spark DataFrames is supplied, the labels are taken from the
