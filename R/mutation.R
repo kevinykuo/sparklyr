@@ -1,3 +1,35 @@
+#' Bind multiple Spark DataFrames by row and column
+#'
+#' \code{sdf_bind_rows()} and \code{sdf_bind_cols()} are implementation of the common pattern of
+#' `do.call(rbind, sdfs)` or `do.call(cbind, sdfs)` for binding many
+#' Spark DataFrames into one.
+#'
+#' The output of \code{sdf_bind_rows()} will contain a column if that column
+#' appears in any of the inputs.
+#'
+#' @param ... Spark tbls to combine.
+#'
+#'   Each argument can either be a Spark DataFrame or a list of
+#'   Spark DataFrames
+#'
+#'   When row-binding, columns are matched by name, and any missing
+#'   columns with be filled with NA.
+#'
+#'   When column-binding, rows are matched by position, so all data
+#'   frames must have the same number of rows. To match by value, not
+#'   position, see [join].
+#' @param .id Data frame identifier.
+#'
+#'   When `.id` is supplied, a new column of identifiers is
+#'   created to link each row to its original Spark DataFrame. The labels
+#'   are taken from the named arguments to `bind_rows()`. When a
+#'   list of Spark DataFrames is supplied, the labels are taken from the
+#'   names of the list. If no names are found a numeric sequence is
+#'   used instead.
+#' @return \code{sdf_bind_rows()} and \code{sdf_bind_cols()} return \code{tbl_spark}
+#' @name sdf_bind
+NULL
+
 #' @rawNamespace S3method(rbind,tbl_spark)
 rbind.tbl_spark <- function(..., deparse.level = 1, name = random_string("sparklyr_tmp_"))
 {
@@ -39,11 +71,11 @@ rbind.tbl_spark <- function(..., deparse.level = 1, name = random_string("sparkl
 #' @importFrom dplyr setdiff
 #' @importFrom rlang sym
 #' @importFrom rlang :=
+#' @rdname sdf_bind
 sdf_bind_rows <- function(..., id = NULL) {
-  dots <- rlang::dots_splice(...)
-  if (! (dots %>%
-           sapply(function(x) inherits(x, "tbl_spark")) %>%
-           all()))
+  id <- ensure_scalar_character(id, allow.null = TRUE)
+  dots <- Filter(length, rlang::dots_splice(...))
+  if (! all(sapply(dots, is.tbl_spark)))
     stop("all inputs must be tbl_spark")
 
   n <- length(dots)
@@ -52,11 +84,23 @@ sdf_bind_rows <- function(..., id = NULL) {
   if (n == 1)
     return(self)
 
+  sc <- self %>%
+    spark_dataframe() %>%
+    spark_connection()
+
   schemas <- lapply(dots, function(x) {
-    x %>%
-      sdf_schema() %>%
-      lapply(dplyr::as_data_frame) %>%
-      bind_rows()
+    schema <- x %>%
+      spark_dataframe %>%
+      invoke("schema")
+    col_names <- schema %>%
+      invoke("fieldNames") %>%
+      unlist
+    col_types <- schema %>%
+      invoke("fields") %>%
+      lapply(function(x) invoke(x, "dataType")) %>%
+      lapply(function(x) invoke(x, "typeName")) %>%
+      unlist
+    dplyr::data_frame(name = col_names, type = col_types)
   })
 
   schema_complements <- schemas %>%
@@ -87,13 +131,12 @@ sdf_bind_rows <- function(..., id = NULL) {
     lapply(sdf_register)
 
   if (!is.null(id)) {
-    id <- ensure_scalar_character(id)
-    labels <- if (any(names(dots) == ""))
-      as.character(seq_along(dots)) else names(dots)
+    if (!all(rlang::have_name(dots)))
+      names(dots) <- as.character(seq_along(dots))
     augmented_dots <- Map(
-      function(x, label) mutate(x, !!! sym(id) := label),
+      function(x, label) dplyr::mutate(x, !!! sym(id) := label),
       augmented_dots,
-      labels
+      names(dots)
     )
   }
 
