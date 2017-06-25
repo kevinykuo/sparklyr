@@ -100,7 +100,8 @@ spark_compile <- function(jar_name,
   Sys.setenv(CLASSPATH = CLASSPATH)
   on.exit(Sys.setenv(CLASSPATH = classpath), add = TRUE)
   scala_files_quoted <- paste(shQuote(scala_files), collapse = " ")
-  status <- execute(shQuote(scalac), "-optimise", "-deprecation", scala_files_quoted)
+  status <- execute(shQuote(scalac), "-optimise", "-deprecation",
+                    "-J-Xss256m", scala_files_quoted)
   if (status)
     stop("==> failed to compile Scala source files")
 
