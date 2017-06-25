@@ -320,7 +320,8 @@ object Utils {
     partitions: Int,
     separator: String): RDD[Row] = {
 
-    val lines = scala.io.Source.fromFile(path).getLines.toIndexedSeq
+    val csvURI = new java.net.URI(path)
+    val lines = scala.io.Source.fromURI(csvURI).getLines.toIndexedSeq
     val rddRows: RDD[String] = sc.parallelize(lines, partitions);
 
     val data: RDD[Row] = rddRows.map(o => {
