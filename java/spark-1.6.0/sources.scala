@@ -1180,12 +1180,14 @@ object Sources {
     "  assign('sessionId', sessionId, envir = worker_log_env)\n" +
     "}\n" +
     "\n" +
-    "worker_log_format <- function(message, level = \"INFO\") {\n" +
+    "worker_log_format <- function(message, level = \"INFO\", component = \"RScript\") {\n" +
     "  paste(\n" +
     "    format(Sys.time(), \"%y/%m/%d %H:%M:%S\"),\n" +
     "    \" \",\n" +
     "    level,\n" +
-    "    \" sparklyr: RScript (\",\n" +
+    "    \" sparklyr: \",\n" +
+    "    component,\n" +
+    "    \" (\",\n" +
     "    worker_log_env$sessionId,\n" +
     "    \") \",\n" +
     "    message,\n" +
