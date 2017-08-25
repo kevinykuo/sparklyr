@@ -8,7 +8,7 @@ get_java <- function(throws = FALSE) {
     java <- file.path(java_home, "bin", "java")
     if (identical(.Platform$OS.type, "windows")) {
       java <- paste0(java, ".exe")
-    }     
+    }
     if (!file.exists(java)) {
       if (throws) {
         stop("Java is required to connect to Spark. ",
@@ -85,10 +85,6 @@ transpose_list <- function(list) {
 
 random_string <- function(prefix = "table") {
   basename(tempfile(prefix))
-}
-
-"%||%" <- function(x, y) {
-  if (is.null(x)) y else x
 }
 
 is_spark_v2 <- function(scon) {

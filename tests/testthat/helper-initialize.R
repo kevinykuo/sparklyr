@@ -15,7 +15,8 @@ testthat_spark_connection <- function(version = NULL) {
   if (!connected) {
     config <- spark_config()
 
-    version <- version %||% Sys.getenv("SPARK_VERSION", unset = "2.1.0")
+    version <- ifelse(is.null(version),
+                      Sys.getenv("SPARK_VERSION", unset = "2.1.0"), version)
     setwd(tempdir())
     sc <- spark_connect(master = "local", version = version, config = config)
     assign(".testthat_spark_connection", sc, envir = .GlobalEnv)
