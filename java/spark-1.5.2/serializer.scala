@@ -331,6 +331,11 @@ object Serializer {
           writeType(dos, "list")
           writeInt(dos, v.length)
           v.foreach(elem => writeObject(dos, elem))
+        case v: Product =>
+          // Tuples
+          writeType(dos, "list")
+          writeInt(dos, v.productArity)
+          v.productIterator.foreach(elem => writeObject(dos, elem.asInstanceOf[Object]))
         case v: java.util.Properties =>
           // Handle Properties
           // This must be above the case java.util.Map below.
