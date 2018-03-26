@@ -258,7 +258,7 @@ start_shell <- function(master,
 
     # add packages to arguments
     if (length(packages) > 0) {
-      shell_args <- c(shell_args, "--packages", paste(shQuote(packages, type = shQuoteType), collapse=","))
+      shell_args <- c(shell_args, "--packages", paste(packages, collapse=","))
     }
 
     # add environment parameters to arguments
