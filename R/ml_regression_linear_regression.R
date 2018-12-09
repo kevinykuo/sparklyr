@@ -52,7 +52,7 @@ ml_linear_regression.spark_connection <- function(x, formula = NULL, fit_interce
                                                   prediction_col = "prediction",
                                                   uid = random_string("linear_regression_"), ...) {
 
-  .args <- list(
+  args <- list(
     fit_intercept = fit_intercept,
     elastic_net_param = elastic_net_param,
     reg_param = reg_param,
@@ -71,19 +71,19 @@ ml_linear_regression.spark_connection <- function(x, formula = NULL, fit_interce
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.LinearRegression", uid,
-    features_col = .args[["features_col"]],
-    label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]],
+    label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setElasticNetParam", .args[["elastic_net_param"]]) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setRegParam", .args[["reg_param"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setSolver", .args[["solver"]]) %>%
-    invoke("setStandardization", .args[["standardization"]]) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    jobj_set_param("setLoss", .args[["loss"]], "2.3.0", "squaredError") %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]])
+    invoke("setElasticNetParam", args[["elastic_net_param"]]) %>%
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setRegParam", args[["reg_param"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setSolver", args[["solver"]]) %>%
+    invoke("setStandardization", args[["standardization"]]) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    jobj_set_param("setLoss", args[["loss"]], "2.3.0", "squaredError") %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]])
 
   new_ml_linear_regression(jobj)
 }
@@ -165,8 +165,8 @@ ml_linear_regression.tbl_spark <- function(x, formula = NULL, fit_intercept = TR
 }
 
 # Validator
-validator_ml_linear_regression <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_linear_regression <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     intercept = "fit_intercept",
     alpha = "elastic_net_param",
     lambda = "reg_param",
@@ -175,15 +175,15 @@ validator_ml_linear_regression <- function(.args) {
     max.iter = "max_iter"
   ))
 
-  .args[["elastic_net_param"]] <- cast_scalar_double(.args[["elastic_net_param"]])
-  .args[["reg_param"]] <- cast_scalar_double(.args[["reg_param"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["fit_intercept"]] <- cast_scalar_logical(.args[["fit_intercept"]])
-  .args[["standardization"]] <- cast_scalar_logical(.args[["standardization"]])
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["solver"]] <- cast_choice(.args[["solver"]], c("auto", "l-bfgs", "normal"))
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args
+  args[["elastic_net_param"]] <- cast_scalar_double(args[["elastic_net_param"]])
+  args[["reg_param"]] <- cast_scalar_double(args[["reg_param"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["fit_intercept"]] <- cast_scalar_logical(args[["fit_intercept"]])
+  args[["standardization"]] <- cast_scalar_logical(args[["standardization"]])
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["solver"]] <- cast_choice(args[["solver"]], c("auto", "l-bfgs", "normal"))
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args
 }
 
 new_ml_linear_regression <- function(jobj) {

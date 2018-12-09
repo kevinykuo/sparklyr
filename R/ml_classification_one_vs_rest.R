@@ -17,7 +17,7 @@ ml_one_vs_rest <- function(x, formula = NULL, classifier = NULL, features_col = 
 ml_one_vs_rest.spark_connection <- function(x, formula = NULL, classifier = NULL, features_col = "features",
                                             label_col = "label", prediction_col = "prediction",
                                             uid = random_string("one_vs_rest_"), ...) {
-  .args <- list(
+  args <- list(
     classifier = classifier,
     features_col = features_col,
     label_col = label_col,
@@ -28,12 +28,12 @@ ml_one_vs_rest.spark_connection <- function(x, formula = NULL, classifier = NULL
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.OneVsRest", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
     jobj_set_param(
       "setClassifier",
-      possibly_null(spark_jobj)(.args[["classifier"]])
+      possibly_null(spark_jobj)(args[["classifier"]])
     )
 
   new_ml_one_vs_rest(jobj)
@@ -90,15 +90,15 @@ ml_one_vs_rest.tbl_spark <- function(x, formula = NULL, classifier = NULL, featu
   }
 }
 
-validator_ml_one_vs_rest <- function(.args) {
-  .args <- validate_args_predictor(.args)
-  .args[["classifier"]] <- if (inherits(.args[["classifier"]], "spark_jobj"))
-    ml_call_constructor(.args[["classifier"]])
+validator_ml_one_vs_rest <- function(args) {
+  args <- validateargs_predictor(args)
+  args[["classifier"]] <- if (inherits(args[["classifier"]], "spark_jobj"))
+    ml_call_constructor(args[["classifier"]])
   else
-    .args[["classifier"]]
-  if (!is.null(.args[["classifier"]]) && !inherits(.args[["classifier"]], "ml_classifier"))
+    args[["classifier"]]
+  if (!is.null(args[["classifier"]]) && !inherits(args[["classifier"]], "ml_classifier"))
     stop("`classifier` must be an `ml_classifier`.", call. = FALSE)
-  .args
+  args
 }
 
 new_ml_one_vs_rest <- function(jobj) {

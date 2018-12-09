@@ -114,10 +114,10 @@ ml_random_forest <- function(x, formula = NULL, type = c("auto", "regression", "
                     regression = ml_random_forest_regressor,
                     classification = ml_random_forest_classifier)
 
-  args <- c(as.list(environment()), list(...))
-  args$response <- NULL
-  args$features <- NULL
-  do.call(routine, args)
+ args <- c(as.list(environment()), list(...))
+ args$response <- NULL
+ args$features <- NULL
+  do.call(routine,args)
 }
 
 new_ml_model_random_forest_classification <- function(pipeline_model, formula, dataset, label_col,

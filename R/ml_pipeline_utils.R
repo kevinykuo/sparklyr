@@ -127,13 +127,13 @@ jobj_set_ml_params <- function(jobj, features_col, label_col, prediction_col,
     jobj_set_param("setOutputCols", output_cols)
 }
 
-validate_args_transformer <- function(.args) {
-  .args <- ml_backwards_compatibility(.args)
-  .args[["input_col"]] <- cast_nullable_string(.args[["input_col"]])
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_col"]] <- cast_nullable_string(.args[["output_col"]])
-  .args[["output_cols"]] <- cast_nullable_string_list(.args[["output_cols"]])
-  .args
+validateargs_transformer <- function(args) {
+  args <- ml_backwards_compatibility(args)
+  args[["input_col"]] <- cast_nullable_string(args[["input_col"]])
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_col"]] <- cast_nullable_string(args[["output_col"]])
+  args[["output_cols"]] <- cast_nullable_string_list(args[["output_cols"]])
+  args
 }
 
 # ml_wrap_in_pipeline <- function(jobj) {
@@ -235,15 +235,15 @@ ml_summary <- function(x, metric = NULL, allow_null = FALSE) {
     x$summary[[metric]] %||% stop("metric ", metric, " not found")
 }
 
-ml_backwards_compatibility <- function(.args, mapping_list = NULL) {
+ml_backwards_compatibility <- function(args, mapping_list = NULL) {
   mapping_list <- mapping_list %||%
     c(input.col = "input_col",
       output.col = "output_col")
 
   purrr::iwalk(
     mapping_list,
-    ~ if (!is.null(.args[[.y]])) {
-      .args[[.x]] <<- .args[[.y]]
+    ~ if (!is.null(args[[.y]])) {
+      args[[.x]] <<- args[[.y]]
       warning("The parameter `", .y,
               "` is deprecated and will be removed in a future release. Please use `",
               .x, "` instead.",
@@ -251,5 +251,5 @@ ml_backwards_compatibility <- function(.args, mapping_list = NULL) {
     }
   )
 
-  .args
+  args
 }

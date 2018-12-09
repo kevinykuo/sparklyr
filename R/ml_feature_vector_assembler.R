@@ -20,7 +20,7 @@ ml_vector_assembler <- ft_vector_assembler
 #' @export
 ft_vector_assembler.spark_connection <- function(x, input_cols = NULL, output_col = NULL,
                                                  uid = random_string("vector_assembler_"), ...) {
-  .args <- list(
+  args <- list(
     input_cols = input_cols,
     output_col = output_col,
     uid = uid
@@ -30,7 +30,7 @@ ft_vector_assembler.spark_connection <- function(x, input_cols = NULL, output_co
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.VectorAssembler",
-    input_cols = .args[["input_cols"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_cols = args[["input_cols"]], output_col = args[["output_col"]], uid = args[["uid"]]
   )
 
   new_ml_vector_assembler(jobj)
@@ -66,11 +66,11 @@ new_ml_vector_assembler <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_vector_assembler")
 }
 
-validator_ml_vector_assembler <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_vector_assembler <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     input.col = "input_cols",
     output.col = "output_col"
   )) %>%
-    validate_args_transformer()
-  .args
+    validateargs_transformer()
+  args
 }

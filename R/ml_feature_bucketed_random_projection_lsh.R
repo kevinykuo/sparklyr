@@ -33,7 +33,7 @@ ft_bucketed_random_projection_lsh.spark_connection <- function(x, input_col = NU
                                                                uid = random_string("bucketed_random_projection_lsh_"), ...) {
   spark_require_version(x, "2.1.0", "LSH")
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     bucket_length = bucket_length,
@@ -46,11 +46,11 @@ ft_bucketed_random_projection_lsh.spark_connection <- function(x, input_col = NU
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.BucketedRandomProjectionLSH",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    jobj_set_param("setBucketLength", .args[["bucket_length"]]) %>%
-    invoke("setNumHashTables", .args[["num_hash_tables"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    jobj_set_param("setBucketLength", args[["bucket_length"]]) %>%
+    invoke("setNumHashTables", args[["num_hash_tables"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   estimator <- new_ml_bucketed_random_projection_lsh(jobj)
 
@@ -114,10 +114,10 @@ new_ml_bucketed_random_projection_lsh_model <- function(jobj) {
     class = "ml_bucketed_random_projection_lsh_model")
 }
 
-validator_ml_bucketed_random_projection_lsh <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["bucket_length"]] <- cast_nullable_scalar_double(.args[["bucket_length"]])
-  .args[["num_hash_tables"]] <- cast_scalar_integer(.args[["num_hash_tables"]])
-  .args[["seed"]] <- cast_nullable_scalar_integer(.args[["seed"]])
-  .args
+validator_ml_bucketed_random_projection_lsh <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["bucket_length"]] <- cast_nullable_scalar_double(args[["bucket_length"]])
+  args[["num_hash_tables"]] <- cast_scalar_integer(args[["num_hash_tables"]])
+  args[["seed"]] <- cast_nullable_scalar_integer(args[["seed"]])
+  args
 }

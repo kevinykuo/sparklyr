@@ -24,7 +24,7 @@ ml_random_forest_classifier.spark_connection <- function(x, formula = NULL, num_
                                                          probability_col = "probability", raw_prediction_col = "rawPrediction",
                                                          uid = random_string("random_forest_classifier_"), ...) {
 
-  .args <- list(
+  args <- list(
     num_trees = num_trees,
     subsampling_rate = subsampling_rate,
     max_depth = max_depth,
@@ -49,23 +49,23 @@ ml_random_forest_classifier.spark_connection <- function(x, formula = NULL, num_
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.RandomForestClassifier", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]], probability_col = .args[["probability_col"]],
-    raw_prediction_col = .args[["raw_prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]], probability_col = args[["probability_col"]],
+    raw_prediction_col = args[["raw_prediction_col"]]
   ) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    invoke("setMaxBins", .args[["max_bins"]]) %>%
-    invoke("setMaxDepth", .args[["max_depth"]]) %>%
-    invoke("setMinInfoGain", .args[["min_info_gain"]]) %>%
-    invoke("setMinInstancesPerNode", .args[["min_instances_per_node"]]) %>%
-    invoke("setCacheNodeIds", .args[["cache_node_ids"]]) %>%
-    invoke("setMaxMemoryInMB", .args[["max_memory_in_mb"]]) %>%
-    invoke("setNumTrees", .args[["num_trees"]]) %>%
-    invoke("setSubsamplingRate", .args[["subsampling_rate"]]) %>%
-    invoke("setFeatureSubsetStrategy", .args[["feature_subset_strategy"]]) %>%
-    invoke("setImpurity", .args[["impurity"]]) %>%
-    jobj_set_param("setThresholds", .args[["thresholds"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    invoke("setMaxBins", args[["max_bins"]]) %>%
+    invoke("setMaxDepth", args[["max_depth"]]) %>%
+    invoke("setMinInfoGain", args[["min_info_gain"]]) %>%
+    invoke("setMinInstancesPerNode", args[["min_instances_per_node"]]) %>%
+    invoke("setCacheNodeIds", args[["cache_node_ids"]]) %>%
+    invoke("setMaxMemoryInMB", args[["max_memory_in_mb"]]) %>%
+    invoke("setNumTrees", args[["num_trees"]]) %>%
+    invoke("setSubsamplingRate", args[["subsampling_rate"]]) %>%
+    invoke("setFeatureSubsetStrategy", args[["feature_subset_strategy"]]) %>%
+    invoke("setImpurity", args[["impurity"]]) %>%
+    jobj_set_param("setThresholds", args[["thresholds"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_random_forest_classifier(jobj)
 }
@@ -162,19 +162,19 @@ ml_random_forest_classifier.tbl_spark <- function(x, formula = NULL, num_trees =
 }
 
 # Validator
-validator_ml_random_forest_classifier <- function(.args) {
-  .args <- .args %>%
+validator_ml_random_forest_classifier <- function(args) {
+  args <- args %>%
     ml_backwards_compatibility(list(
       sample.rate = "subsampling_rate",
       num.trees = "num_trees",
       col.sample.rate = "feature_subset_strategy"
     )) %>%
-    ml_validate_decision_tree_args()
-  .args[["thresholds"]] <- cast_nullable_double_list(.args[["thresholds"]])
-  .args[["num_trees"]] <- cast_scalar_integer(.args[["num_trees"]])
-  .args[["subsampling_rate"]] <- cast_scalar_double(.args[["subsampling_rate"]])
-  .args[["impurity"]] <- cast_choice(.args[["impurity"]], c("gini", "entropy"))
-  .args
+    ml_validate_decision_treeargs()
+  args[["thresholds"]] <- cast_nullable_double_list(args[["thresholds"]])
+  args[["num_trees"]] <- cast_scalar_integer(args[["num_trees"]])
+  args[["subsampling_rate"]] <- cast_scalar_double(args[["subsampling_rate"]])
+  args[["impurity"]] <- cast_choice(args[["impurity"]], c("gini", "entropy"))
+  args
 }
 
 # Constructors

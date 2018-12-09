@@ -22,7 +22,7 @@ ml_decision_tree_classifier.spark_connection <- function(x, formula = NULL, max_
                                                          probability_col = "probability", raw_prediction_col = "rawPrediction",
                                                          uid = random_string("decision_tree_classifier_"), ...) {
 
-  .args <- list(
+  args <- list(
     max_depth = max_depth,
     max_bins = max_bins,
     min_instances_per_node = min_instances_per_node,
@@ -44,21 +44,21 @@ ml_decision_tree_classifier.spark_connection <- function(x, formula = NULL, max_
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.DecisionTreeClassifier", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]],
-    probability_col = .args[["probability_col"]],
-    raw_prediction_col = .args[["raw_prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]],
+    probability_col = args[["probability_col"]],
+    raw_prediction_col = args[["raw_prediction_col"]]
   ) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    invoke("setImpurity", .args[["impurity"]]) %>%
-    invoke("setMaxBins", .args[["max_bins"]]) %>%
-    invoke("setMaxDepth", .args[["max_depth"]]) %>%
-    invoke("setMinInfoGain", .args[["min_info_gain"]]) %>%
-    invoke("setMinInstancesPerNode", .args[["min_instances_per_node"]]) %>%
-    invoke("setCacheNodeIds", .args[["cache_node_ids"]]) %>%
-    invoke("setMaxMemoryInMB", .args[["max_memory_in_mb"]]) %>%
-    jobj_set_param("setThresholds", .args[["thresholds"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    invoke("setImpurity", args[["impurity"]]) %>%
+    invoke("setMaxBins", args[["max_bins"]]) %>%
+    invoke("setMaxDepth", args[["max_depth"]]) %>%
+    invoke("setMinInfoGain", args[["min_info_gain"]]) %>%
+    invoke("setMinInstancesPerNode", args[["min_instances_per_node"]]) %>%
+    invoke("setCacheNodeIds", args[["cache_node_ids"]]) %>%
+    invoke("setMaxMemoryInMB", args[["max_memory_in_mb"]]) %>%
+    jobj_set_param("setThresholds", args[["thresholds"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_decision_tree_classifier(jobj)
 }
@@ -150,11 +150,11 @@ ml_decision_tree_classifier.tbl_spark <- function(x, formula = NULL, max_depth =
   }
 }
 
-validator_ml_decision_tree_classifier <- function(.args) {
-  .args <- ml_validate_decision_tree_args(.args)
-  .args[["thresholds"]] <- cast_nullable_double_list(.args[["thresholds"]])
-  .args[["impurity"]] <- cast_choice(.args[["impurity"]], c("gini", "entropy"))
-  .args
+validator_ml_decision_tree_classifier <- function(args) {
+  args <- ml_validate_decision_treeargs(args)
+  args[["thresholds"]] <- cast_nullable_double_list(args[["thresholds"]])
+  args[["impurity"]] <- cast_choice(args[["impurity"]], c("gini", "entropy"))
+  args
 }
 
 new_ml_decision_tree_classifier <- function(jobj) {

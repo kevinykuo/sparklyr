@@ -23,7 +23,7 @@ ml_gbt_regressor.spark_connection <- function(x, formula = NULL, max_iter = 20, 
                                               uid = random_string("gbt_regressor_"), ...) {
 
 
-  .args <- list(
+  args <- list(
     max_iter = max_iter,
     max_depth = max_depth,
     step_size = step_size,
@@ -46,22 +46,22 @@ ml_gbt_regressor.spark_connection <- function(x, formula = NULL, max_iter = 20, 
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.GBTRegressor", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    invoke("setMaxBins", .args[["max_bins"]]) %>%
-    invoke("setMaxDepth", .args[["max_depth"]]) %>%
-    invoke("setMinInfoGain", .args[["min_info_gain"]]) %>%
-    invoke("setMinInstancesPerNode", .args[["min_instances_per_node"]]) %>%
-    invoke("setCacheNodeIds", .args[["cache_node_ids"]]) %>%
-    invoke("setMaxMemoryInMB", .args[["max_memory_in_mb"]]) %>%
-    invoke("setLossType", .args[["loss_type"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setStepSize", .args[["step_size"]]) %>%
-    invoke("setSubsamplingRate", .args[["subsampling_rate"]]) %>%
-    jobj_set_param("setFeatureSubsetStrategy", .args[["feature_subset_strategy"]], "2.3.0", "auto") %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    invoke("setMaxBins", args[["max_bins"]]) %>%
+    invoke("setMaxDepth", args[["max_depth"]]) %>%
+    invoke("setMinInfoGain", args[["min_info_gain"]]) %>%
+    invoke("setMinInstancesPerNode", args[["min_instances_per_node"]]) %>%
+    invoke("setCacheNodeIds", args[["cache_node_ids"]]) %>%
+    invoke("setMaxMemoryInMB", args[["max_memory_in_mb"]]) %>%
+    invoke("setLossType", args[["loss_type"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setStepSize", args[["step_size"]]) %>%
+    invoke("setSubsamplingRate", args[["subsampling_rate"]]) %>%
+    jobj_set_param("setFeatureSubsetStrategy", args[["feature_subset_strategy"]], "2.3.0", "auto") %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_gbt_regressor(jobj)
 }
@@ -151,21 +151,21 @@ ml_gbt_regressor.tbl_spark <- function(x, formula = NULL, max_iter = 20, max_dep
 }
 
 # Validator
-validator_ml_gbt_regressor <- function(.args) {
-  .args <- .args %>%
+validator_ml_gbt_regressor <- function(args) {
+  args <- args %>%
     ml_backwards_compatibility(
       list(num.trees = "max_iter",
            loss.type = "loss_type",
            sample.rate = "subsampling_rate")
     ) %>%
-    ml_validate_decision_tree_args()
+    ml_validate_decision_treeargs()
 
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["step_size"]] <- cast_scalar_double(.args[["step_size"]])
-  .args[["subsampling_rate"]] <- cast_scalar_double(.args[["subsampling_rate"]])
-  .args[["loss_type"]] <- cast_choice(.args[["loss_type"]], c("squared", "absolute"))
-  .args[["feature_subset_strategy"]] <- cast_string(.args[["feature_subset_strategy"]])
-  .args
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["step_size"]] <- cast_scalar_double(args[["step_size"]])
+  args[["subsampling_rate"]] <- cast_scalar_double(args[["subsampling_rate"]])
+  args[["loss_type"]] <- cast_choice(args[["loss_type"]], c("squared", "absolute"))
+  args[["feature_subset_strategy"]] <- cast_string(args[["feature_subset_strategy"]])
+  args
 }
 
 # Constructors

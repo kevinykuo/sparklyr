@@ -35,7 +35,7 @@ ml_bisecting_kmeans.spark_connection <- function(x, formula = NULL, k = 4, max_i
                                                  features_col = "features", prediction_col = "prediction",
                                                  uid = random_string("bisecting_bisecting_kmeans_"),
                                                  ...) {
-  .args <- list(
+  args <- list(
     k = k,
     max_iter = max_iter,
     seed = seed,
@@ -48,11 +48,11 @@ ml_bisecting_kmeans.spark_connection <- function(x, formula = NULL, k = 4, max_i
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.clustering.BisectingKMeans", uid,
-    features_col = .args[["features_col"]],
-    k = .args[["k"]], max_iter = .args[["max_iter"]], seed = .args[["seed"]]
+    features_col = args[["features_col"]],
+    k = args[["k"]], max_iter = args[["max_iter"]], seed = args[["seed"]]
   ) %>%
-    invoke("setPredictionCol", .args[["prediction_col"]]) %>%
-    invoke("setMinDivisibleClusterSize", .args[["min_divisible_cluster_size"]])
+    invoke("setPredictionCol", args[["prediction_col"]]) %>%
+    invoke("setMinDivisibleClusterSize", args[["min_divisible_cluster_size"]])
 
   new_ml_bisecting_kmeans(jobj)
 }
@@ -113,11 +113,11 @@ ml_bisecting_kmeans.tbl_spark <- function(x, formula = NULL, k = 4, max_iter = 2
   }
 }
 
-validator_ml_bisecting_kmeans <- function(.args) {
-  .args <- validate_args_clustering(.args)
-  .args[["prediction_col"]] <- cast_string(.args[["prediction_col"]])
-  .args[["min_divisible_cluster_size"]] <- cast_scalar_double(.args[["min_divisible_cluster_size"]])
-  .args
+validator_ml_bisecting_kmeans <- function(args) {
+  args <- validateargs_clustering(args)
+  args[["prediction_col"]] <- cast_string(args[["prediction_col"]])
+  args[["min_divisible_cluster_size"]] <- cast_scalar_double(args[["min_divisible_cluster_size"]])
+  args
 }
 
 new_ml_bisecting_kmeans <- function(jobj) {

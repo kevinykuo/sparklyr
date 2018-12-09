@@ -51,7 +51,7 @@ ml_linear_svc.spark_connection <- function(x, formula = NULL, fit_intercept = TR
                                            prediction_col = "prediction", raw_prediction_col = "rawPrediction",
                                            uid = random_string("linear_svc_"), ...) {
 
-  .args <- list(
+  args <- list(
     fit_intercept = fit_intercept,
     reg_param = reg_param,
     max_iter = max_iter,
@@ -70,18 +70,18 @@ ml_linear_svc.spark_connection <- function(x, formula = NULL, fit_intercept = TR
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.LinearSVC", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setRawPredictionCol", .args[["raw_prediction_col"]]) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setRegParam", .args[["reg_param"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setStandardization", .args[["standardization"]]) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    invoke("setAggregationDepth", .args[["aggregation_depth"]]) %>%
-    invoke("setThreshold", .args[["threshold"]]) %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]])
+    invoke("setRawPredictionCol", args[["raw_prediction_col"]]) %>%
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setRegParam", args[["reg_param"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setStandardization", args[["standardization"]]) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    invoke("setAggregationDepth", args[["aggregation_depth"]]) %>%
+    invoke("setThreshold", args[["threshold"]]) %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]])
 
   new_ml_linear_svc(jobj)
 }
@@ -161,17 +161,17 @@ ml_linear_svc.tbl_spark <- function(x, formula = NULL, fit_intercept = TRUE, reg
 }
 
 # Validator
-validator_ml_linear_svc <- function(.args) {
-  .args[["reg_param"]] <- cast_scalar_double(.args[["reg_param"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["fit_intercept"]] <- cast_scalar_logical(.args[["fit_intercept"]])
-  .args[["standardization"]] <- cast_scalar_logical(.args[["standardization"]])
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["aggregation_depth"]] <- cast_scalar_integer(.args[["aggregation_depth"]])
-  .args[["raw_prediction_col"]] <- cast_string(.args[["raw_prediction_col"]])
-  .args[["threshold"]] <- cast_scalar_double(.args[["threshold"]])
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args
+validator_ml_linear_svc <- function(args) {
+  args[["reg_param"]] <- cast_scalar_double(args[["reg_param"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["fit_intercept"]] <- cast_scalar_logical(args[["fit_intercept"]])
+  args[["standardization"]] <- cast_scalar_logical(args[["standardization"]])
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["aggregation_depth"]] <- cast_scalar_integer(args[["aggregation_depth"]])
+  args[["raw_prediction_col"]] <- cast_string(args[["raw_prediction_col"]])
+  args[["threshold"]] <- cast_scalar_double(args[["threshold"]])
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args
 }
 
 # Constructors

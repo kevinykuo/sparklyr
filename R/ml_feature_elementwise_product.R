@@ -21,7 +21,7 @@ ft_elementwise_product.spark_connection <- function(x, input_col = NULL, output_
                                                     uid = random_string("elementwise_product_"), ...) {
   spark_require_version(x, "2.0.0", "ElementwiseProduct")
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     scaling_vec = scaling_vec,
@@ -32,9 +32,9 @@ ft_elementwise_product.spark_connection <- function(x, input_col = NULL, output_
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.ElementwiseProduct",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]])
-  if (!is.null(.args[["scaling_vec"]]))
-    jobj <- invoke_static(x, "sparklyr.MLUtils2", "setScalingVec", jobj, .args[["scaling_vec"]])
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]])
+  if (!is.null(args[["scaling_vec"]]))
+    jobj <- invoke_static(x, "sparklyr.MLUtils2", "setScalingVec", jobj, args[["scaling_vec"]])
 
   new_ml_elementwise_product(jobj)
 }
@@ -72,8 +72,8 @@ new_ml_elementwise_product <- function(jobj) {
 }
 
 # ElementwiseProduct
-validator_ml_elementwise_product <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["scaling_vec"]] <- cast_nullable_double_list(.args[["scaling_vec"]])
-  .args
+validator_ml_elementwise_product <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["scaling_vec"]] <- cast_nullable_double_list(args[["scaling_vec"]])
+  args
 }

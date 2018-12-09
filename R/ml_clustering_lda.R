@@ -99,7 +99,7 @@ ml_lda.spark_connection <- function(x, k = 10, max_iter = 20, doc_concentration 
                                     optimize_doc_concentration = TRUE, seed = NULL, features_col = "features",
                                     topic_distribution_col = "topicDistribution", uid = random_string("lda_"), ...) {
 
-  .args <- list(
+  args <- list(
     k = k,
     max_iter = max_iter,
     doc_concentration = doc_concentration,
@@ -121,20 +121,20 @@ ml_lda.spark_connection <- function(x, k = 10, max_iter = 20, doc_concentration 
   uid <- cast_string(uid)
 
   jobj <- invoke_new(x, "org.apache.spark.ml.clustering.LDA", uid) %>%
-    invoke("setK", .args[["k"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setSubsamplingRate", .args[["subsampling_rate"]]) %>%
-    invoke("setOptimizer", .args[["optimizer"]]) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    jobj_set_param("setKeepLastCheckpoint", .args[["keep_last_checkpoint"]], "2.0.0", TRUE) %>%
-    invoke("setLearningDecay", .args[["learning_decay"]]) %>%
-    invoke("setLearningOffset", .args[["learning_offset"]]) %>%
-    invoke("setOptimizeDocConcentration", .args[["optimize_doc_concentration"]]) %>%
-    invoke("setFeaturesCol", .args[["features_col"]]) %>%
-    invoke("setTopicDistributionCol", .args[["topic_distribution_col"]]) %>%
-    jobj_set_param("setDocConcentration", .args[["doc_concentration"]]) %>%
-    jobj_set_param("setTopicConcentration", .args[["topic_concentration"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setK", args[["k"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setSubsamplingRate", args[["subsampling_rate"]]) %>%
+    invoke("setOptimizer", args[["optimizer"]]) %>%
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    jobj_set_param("setKeepLastCheckpoint", args[["keep_last_checkpoint"]], "2.0.0", TRUE) %>%
+    invoke("setLearningDecay", args[["learning_decay"]]) %>%
+    invoke("setLearningOffset", args[["learning_offset"]]) %>%
+    invoke("setOptimizeDocConcentration", args[["optimize_doc_concentration"]]) %>%
+    invoke("setFeaturesCol", args[["features_col"]]) %>%
+    invoke("setTopicDistributionCol", args[["topic_distribution_col"]]) %>%
+    jobj_set_param("setDocConcentration", args[["doc_concentration"]]) %>%
+    jobj_set_param("setTopicConcentration", args[["topic_concentration"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_lda(jobj)
 }
@@ -199,25 +199,25 @@ ml_lda.tbl_spark <- function(x, k = 10, max_iter = 20, doc_concentration = NULL,
 }
 
 # Validator
-validator_ml_lda <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_lda <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     alpha = "doc_concentration",
     beta = "topic_concentration",
     max.iterations = "max_iter"
   )) %>%
-    validate_args_clustering()
+    validateargs_clustering()
 
-  .args[["doc_concentration"]] <- cast_nullable_scalar_double(.args[["doc_concentration"]])
-  .args[["topic_concentration"]] <- cast_nullable_scalar_double(.args[["topic_concentration"]])
-  .args[["subsampling_rate"]] <- cast_scalar_double(.args[["subsampling_rate"]])
-  .args[["optimizer"]] <- cast_choice(.args[["optimizer"]], c("online", "em"))
-  .args[["checkpoint_interval"]] <- cast_scalar_integer(.args[["checkpoint_interval"]])
-  .args[["keep_last_checkpoint"]] <- cast_scalar_logical(.args[["keep_last_checkpoint"]])
-  .args[["learning_decay"]] <- cast_scalar_double(.args[["learning_decay"]])
-  .args[["learning_offset"]] <- cast_scalar_double(.args[["learning_offset"]])
-  .args[["optimize_doc_concentration"]] <- cast_scalar_logical(.args[["optimize_doc_concentration"]])
-  .args[["topic_distribution_col"]] <- cast_string( .args[["topic_distribution_col"]])
-  .args
+  args[["doc_concentration"]] <- cast_nullable_scalar_double(args[["doc_concentration"]])
+  args[["topic_concentration"]] <- cast_nullable_scalar_double(args[["topic_concentration"]])
+  args[["subsampling_rate"]] <- cast_scalar_double(args[["subsampling_rate"]])
+  args[["optimizer"]] <- cast_choice(args[["optimizer"]], c("online", "em"))
+  args[["checkpoint_interval"]] <- cast_scalar_integer(args[["checkpoint_interval"]])
+  args[["keep_last_checkpoint"]] <- cast_scalar_logical(args[["keep_last_checkpoint"]])
+  args[["learning_decay"]] <- cast_scalar_double(args[["learning_decay"]])
+  args[["learning_offset"]] <- cast_scalar_double(args[["learning_offset"]])
+  args[["optimize_doc_concentration"]] <- cast_scalar_logical(args[["optimize_doc_concentration"]])
+  args[["topic_distribution_col"]] <- cast_string( args[["topic_distribution_col"]])
+  args
 }
 
 new_ml_lda <- function(jobj) {

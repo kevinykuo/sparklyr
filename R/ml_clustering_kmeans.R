@@ -32,7 +32,7 @@ ml_kmeans.spark_connection <- function(x, formula = NULL, k = 2, max_iter = 20, 
                                        features_col = "features", prediction_col = "prediction",
                                        uid = random_string("kmeans_"), ...) {
 
-  .args <- list(
+  args <- list(
     k = k,
     max_iter = max_iter,
     tol = tol,
@@ -47,13 +47,13 @@ ml_kmeans.spark_connection <- function(x, formula = NULL, k = 2, max_iter = 20, 
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.clustering.KMeans", uid,
-    features_col = .args[["features_col"]], k = .args[["k"]],
-    max_iter = .args[["max_iter"]], seed = .args[["seed"]]
+    features_col = args[["features_col"]], k = args[["k"]],
+    max_iter = args[["max_iter"]], seed = args[["seed"]]
   ) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    invoke("setInitSteps", .args[["init_steps"]]) %>%
-    invoke("setInitMode" , .args[["init_mode"]]) %>%
-    invoke("setPredictionCol", .args[["prediction_col"]])
+    invoke("setTol", args[["tol"]]) %>%
+    invoke("setInitSteps", args[["init_steps"]]) %>%
+    invoke("setInitMode" , args[["init_mode"]]) %>%
+    invoke("setPredictionCol", args[["prediction_col"]])
 
   new_ml_kmeans(jobj)
 }
@@ -117,19 +117,19 @@ ml_kmeans.tbl_spark <- function(x, formula = NULL, k = 2, max_iter = 20, tol = 1
 }
 
 # Validator
-validator_ml_kmeans <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_kmeans <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     centers = "k",
     tolerance = "tol",
     iter.max = "max_iter"
   )) %>%
-    validate_args_clustering()
+    validateargs_clustering()
 
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["init_steps"]] <- cast_scalar_integer(.args[["init_steps"]])
-  .args[["init_mode"]] <- cast_choice(.args[["init_mode"]], c("random", "k-means||"))
-  .args[["prediction_col"]] <- cast_string(.args[["prediction_col"]])
-  .args
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["init_steps"]] <- cast_scalar_integer(args[["init_steps"]])
+  args[["init_mode"]] <- cast_choice(args[["init_mode"]], c("random", "k-means||"))
+  args[["prediction_col"]] <- cast_string(args[["prediction_col"]])
+  args
 }
 
 new_ml_kmeans <- function(jobj) {

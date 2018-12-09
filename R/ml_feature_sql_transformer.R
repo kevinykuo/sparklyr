@@ -25,7 +25,7 @@ ml_sql_transformer <- ft_sql_transformer
 ft_sql_transformer.spark_connection <- function(x, statement = NULL,
                                                 uid = random_string("sql_transformer_"), ...) {
 
-  .args <- list(
+  args <- list(
     statement = statement,
     uid = uid
   ) %>%
@@ -34,8 +34,8 @@ ft_sql_transformer.spark_connection <- function(x, statement = NULL,
 
   jobj <- invoke_new(
     x, "org.apache.spark.ml.feature.SQLTransformer",
-    .args[["uid"]]) %>%
-    jobj_set_param("setStatement", .args[["statement"]])
+    args[["uid"]]) %>%
+    jobj_set_param("setStatement", args[["statement"]])
 
   new_ml_sql_transformer(jobj)
 }
@@ -133,11 +133,11 @@ ft_dplyr_transformer.tbl_spark <- function(x, tbl,
   ml_transform(stage, x)
 }
 
-validator_ml_sql_transformer <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_sql_transformer <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     sql = "statement"
   ))
-  .args[["statement"]] <- cast_nullable_string(.args[["statement"]])
-  .args[["uid"]] <- cast_string(.args[["uid"]])
-  .args
+  args[["statement"]] <- cast_nullable_string(args[["statement"]])
+  args[["uid"]] <- cast_string(args[["uid"]])
+  args
 }

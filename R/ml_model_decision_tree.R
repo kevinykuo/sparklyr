@@ -80,10 +80,10 @@ ml_decision_tree <- function(x, formula = NULL, type = c("auto", "regression", "
     impurity
   }
 
-  args <- c(as.list(environment()), list(...))
-  args$response <- NULL
-  args$features <- NULL
-  do.call(routine, args)
+ args <- c(as.list(environment()), list(...))
+ args$response <- NULL
+ args$features <- NULL
+  do.call(routine,args)
 }
 
 new_ml_model_decision_tree_classification <- function(pipeline_model, formula, dataset, label_col,

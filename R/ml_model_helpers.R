@@ -44,7 +44,7 @@ ml_model_supervised <- function(constructor, predictor, formula, dataset,
     label_col = label_col
   )
 
-  .args <- list(
+  args <- list(
     pipeline_model = pipeline_model,
     formula = formula,
     dataset = dataset,
@@ -53,7 +53,7 @@ ml_model_supervised <- function(constructor, predictor, formula, dataset,
     ...
   )
 
-  rlang::exec(constructor, !!!.args)
+  rlang::exec(constructor, !!!args)
 }
 
 #' @export
@@ -66,7 +66,7 @@ ml_model_clustering <- function(constructor, predictor, formula, dataset, featur
     features_col = features_col
   )
 
-  .args <- list(
+  args <- list(
     pipeline_model = pipeline_model,
     formula = formula,
     dataset = dataset,
@@ -74,5 +74,5 @@ ml_model_clustering <- function(constructor, predictor, formula, dataset, featur
     ...
   )
 
-  rlang::exec(constructor, !!!.args)
+  rlang::exec(constructor, !!!args)
 }

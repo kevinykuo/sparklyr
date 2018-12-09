@@ -41,7 +41,7 @@ ml_bucketizer <- ft_bucketizer
 ft_bucketizer.spark_connection <- function(x, input_col = NULL, output_col = NULL, splits = NULL,
                                            input_cols = NULL, output_cols = NULL, splits_array = NULL,
                                            handle_invalid = "error", uid = random_string("bucketizer_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     splits = splits,
@@ -55,16 +55,16 @@ ft_bucketizer.spark_connection <- function(x, input_col = NULL, output_col = NUL
     validator_ml_bucketizer()
 
   jobj <- spark_pipeline_stage(
-    x, "org.apache.spark.ml.feature.Bucketizer", .args[["uid"]],
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]]
+    x, "org.apache.spark.ml.feature.Bucketizer", args[["uid"]],
+    input_col = args[["input_col"]], output_col = args[["output_col"]]
   ) %>%
-    jobj_set_param("setSplits", .args[["splits"]]) %>%
-    jobj_set_param("setInputCols", .args[["input_cols"]], "2.3.0") %>%
-    jobj_set_param("setOutputCols", .args[["output_cols"]], "2.3.0") %>%
-    jobj_set_param("setHandleInvalid", .args[["handle_invalid"]], "2.1.0", "error")
-  if (!is.null(.args[["splits_array"]]))
+    jobj_set_param("setSplits", args[["splits"]]) %>%
+    jobj_set_param("setInputCols", args[["input_cols"]], "2.3.0") %>%
+    jobj_set_param("setOutputCols", args[["output_cols"]], "2.3.0") %>%
+    jobj_set_param("setHandleInvalid", args[["handle_invalid"]], "2.1.0", "error")
+  if (!is.null(args[["splits_array"]]))
     jobj <- invoke_static(x, "sparklyr.BucketizerUtils", "setSplitsArrayParam",
-                          jobj, .args[["splits_array"]])
+                          jobj, args[["splits_array"]])
 
   new_ml_bucketizer(jobj)
 }
@@ -112,25 +112,25 @@ new_ml_bucketizer <- function(jobj) {
 }
 
 # Validator
-validator_ml_bucketizer <- function(.args) {
-  .args[["uid"]] <- cast_scalar_character(.args[["uid"]])
+validator_ml_bucketizer <- function(args) {
+  args[["uid"]] <- cast_scalar_character(args[["uid"]])
 
-  if (!is.null(.args[["input_col"]]) && !is.null(.args[["input_cols"]]))
+  if (!is.null(args[["input_col"]]) && !is.null(args[["input_cols"]]))
     stop("Only one of `input_col` or `input_cols` may be specified.", call. = FALSE)
-  .args[["input_col"]] <- cast_nullable_string(.args[["input_col"]])
-  .args[["output_col"]] <- cast_nullable_string(.args[["output_col"]])
-  if (!is.null(.args[["splits"]]) && length(.args[["splits"]]) < 3)
+  args[["input_col"]] <- cast_nullable_string(args[["input_col"]])
+  args[["output_col"]] <- cast_nullable_string(args[["output_col"]])
+  if (!is.null(args[["splits"]]) && length(args[["splits"]]) < 3)
     stop("`splits` must be at least length 3.", call. = FALSE)
-  .args[["splits"]] <- cast_nullable_double_list(.args[["splits"]])
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_cols"]] <- cast_nullable_string_list(.args[["output_cols"]])
-  if (!is.null(.args[["splits_array"]]))
-    .args[["splits_array"]] <- purrr::map(
-      .args[["splits_array"]],
+  args[["splits"]] <- cast_nullable_double_list(args[["splits"]])
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_cols"]] <- cast_nullable_string_list(args[["output_cols"]])
+  if (!is.null(args[["splits_array"]]))
+    args[["splits_array"]] <- purrr::map(
+      args[["splits_array"]],
       ~ cast_double_list(.x)
     )
-  .args[["handle_invalid"]] <- cast_choice(
-    .args[["handle_invalid"]], c("error", "skip", "keep")
+  args[["handle_invalid"]] <- cast_choice(
+    args[["handle_invalid"]], c("error", "skip", "keep")
   )
-  .args
+  args
 }

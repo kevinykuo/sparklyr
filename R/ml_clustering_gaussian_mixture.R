@@ -36,7 +36,7 @@ ml_gaussian_mixture.spark_connection <- function(x, formula = NULL, k = 2, max_i
                                                  uid = random_string("gaussian_mixture_"), ...) {
   spark_require_version(spark_connection(x), "2.0.0", "GaussianMixture")
 
-  .args <- list(
+  args <- list(
     k = k,
     max_iter = max_iter,
     tol = tol,
@@ -50,12 +50,12 @@ ml_gaussian_mixture.spark_connection <- function(x, formula = NULL, k = 2, max_i
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.clustering.GaussianMixture", uid,
-    features_col = .args[["features_col"]],
-    k = .args[["k"]], max_iter = .args[["max_iter"]], seed = .args[["seed"]]
+    features_col = args[["features_col"]],
+    k = args[["k"]], max_iter = args[["max_iter"]], seed = args[["seed"]]
   ) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    invoke("setPredictionCol", .args[["prediction_col"]]) %>%
-    invoke("setProbabilityCol", .args[["probability_col"]])
+    invoke("setTol", args[["tol"]]) %>%
+    invoke("setPredictionCol", args[["prediction_col"]]) %>%
+    invoke("setProbabilityCol", args[["probability_col"]])
 
   new_ml_gaussian_mixture(jobj)
 }
@@ -117,12 +117,12 @@ ml_gaussian_mixture.tbl_spark <- function(x, formula = NULL, k = 2, max_iter = 1
   }
 }
 
-validator_ml_gaussian_mixture <- function(.args) {
-  .args <- validate_args_clustering(.args)
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["prediction_col"]] <- cast_string(.args[["prediction_col"]])
-  .args[["probability_col"]] <- cast_string(.args[["probability_col"]])
-  .args
+validator_ml_gaussian_mixture <- function(args) {
+  args <- validateargs_clustering(args)
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["prediction_col"]] <- cast_string(args[["prediction_col"]])
+  args[["probability_col"]] <- cast_string(args[["probability_col"]])
+  args
 }
 
 new_ml_gaussian_mixture <- function(jobj) {

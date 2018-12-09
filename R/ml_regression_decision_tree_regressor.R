@@ -20,7 +20,7 @@ ml_decision_tree_regressor.spark_connection <- function(x, formula = NULL, max_d
                                                         prediction_col = "prediction", uid = random_string("decision_tree_regressor_"),
                                                         ...) {
 
-  .args <- list(
+  args <- list(
     max_depth = max_depth,
     max_bins = max_bins,
     min_instances_per_node = min_instances_per_node,
@@ -40,20 +40,20 @@ ml_decision_tree_regressor.spark_connection <- function(x, formula = NULL, max_d
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.DecisionTreeRegressor", uid,
-    features_col = .args[["features_col"]],
-    label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]],
+    label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    invoke("setImpurity", .args[["impurity"]]) %>%
-    invoke("setMaxBins", .args[["max_bins"]]) %>%
-    invoke("setMaxDepth", .args[["max_depth"]]) %>%
-    invoke("setMinInfoGain", .args[["min_info_gain"]]) %>%
-    invoke("setMinInstancesPerNode", .args[["min_instances_per_node"]]) %>%
-    invoke("setCacheNodeIds", .args[["cache_node_ids"]]) %>%
-    invoke("setMaxMemoryInMB", .args[["max_memory_in_mb"]]) %>%
-    jobj_set_param("setVarianceCol", .args[["variance_col"]], "2.0.0") %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    invoke("setImpurity", args[["impurity"]]) %>%
+    invoke("setMaxBins", args[["max_bins"]]) %>%
+    invoke("setMaxDepth", args[["max_depth"]]) %>%
+    invoke("setMinInfoGain", args[["min_info_gain"]]) %>%
+    invoke("setMinInstancesPerNode", args[["min_instances_per_node"]]) %>%
+    invoke("setCacheNodeIds", args[["cache_node_ids"]]) %>%
+    invoke("setMaxMemoryInMB", args[["max_memory_in_mb"]]) %>%
+    jobj_set_param("setVarianceCol", args[["variance_col"]], "2.0.0") %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_decision_tree_regressor(jobj)
 }
@@ -134,11 +134,11 @@ ml_decision_tree_regressor.tbl_spark <- function(x, formula = NULL, max_depth = 
 }
 
 # Validator
-validator_ml_decision_tree_regressor <- function(.args) {
-  .args <- ml_validate_decision_tree_args(.args)
-  .args[["impurity"]] <- cast_choice(.args[["impurity"]], c("variance"))
-  .args[["variance_col"]] <- cast_nullable_string(.args[["variance_col"]])
-  .args
+validator_ml_decision_tree_regressor <- function(args) {
+  args <- ml_validate_decision_treeargs(args)
+  args[["impurity"]] <- cast_choice(args[["impurity"]], c("variance"))
+  args[["variance_col"]] <- cast_nullable_string(args[["variance_col"]])
+  args
 }
 
 new_ml_decision_tree_regressor <- function(jobj) {

@@ -18,7 +18,7 @@ ft_pca <- function(x, input_col = NULL, output_col = NULL, k = NULL, dataset = N
 ft_pca.spark_connection <- function(x, input_col = NULL, output_col = NULL, k = NULL, dataset = NULL,
                                     uid = random_string("pca_"), ...) {
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     k = k,
@@ -29,9 +29,9 @@ ft_pca.spark_connection <- function(x, input_col = NULL, output_col = NULL, k = 
 
   estimator <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.PCA",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    jobj_set_param("setK", .args[["k"]]) %>%
+    jobj_set_param("setK", args[["k"]]) %>%
     new_ml_pca()
 
   if (is.null(dataset))
@@ -89,10 +89,10 @@ new_ml_pca_model <- function(jobj) {
     class = "ml_pca_model")
 }
 
-validator_ml_pca <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["k"]] <- cast_nullable_scalar_integer(.args[["k"]])
-  .args
+validator_ml_pca <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["k"]] <- cast_nullable_scalar_integer(args[["k"]])
+  args
 }
 
 #' @rdname ft_pca

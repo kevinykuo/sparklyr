@@ -51,7 +51,7 @@ ml_multilayer_perceptron_classifier.spark_connection <- function(x, formula = NU
                                                                  prediction_col = "prediction",
                                                                  uid = random_string("multilayer_perceptron_classifier_"), ...) {
 
-  .args <- list(
+  args <- list(
     layers = layers,
     max_iter = max_iter,
     step_size = step_size,
@@ -69,23 +69,23 @@ ml_multilayer_perceptron_classifier.spark_connection <- function(x, formula = NU
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.MultilayerPerceptronClassifier", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    jobj_set_param("setLayers", .args[["layers"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    jobj_set_param("setStepSize", .args[["step_size"]], "2.0.0", 0.03) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    invoke("setBlockSize", .args[["block_size"]]) %>%
-    jobj_set_param("setSolver", .args[["solver"]], "2.0.0", "l-bfgs") %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    jobj_set_param("setLayers", args[["layers"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    jobj_set_param("setStepSize", args[["step_size"]], "2.0.0", 0.03) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    invoke("setBlockSize", args[["block_size"]]) %>%
+    jobj_set_param("setSolver", args[["solver"]], "2.0.0", "l-bfgs") %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
 
   if(!is.null(initial_weights) && spark_version(x) >= "2.0.0")
     jobj <- invoke_static(spark_connection(jobj),
                           "sparklyr.MLUtils2",
                           "setInitialWeights",
-                          jobj, .args[["initial_weights"]])
+                          jobj, args[["initial_weights"]])
 
   new_ml_multilayer_perceptron_classifier(jobj)
 }
@@ -176,17 +176,17 @@ ml_multilayer_perceptron <- function(x, formula = NULL, layers, max_iter = 100, 
   UseMethod("ml_multilayer_perceptron_classifier")
 }
 
-validator_ml_multilayer_perceptron_classifier <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(iter.max = "max_iter"))
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["step_size"]] <- cast_scalar_double(.args[["step_size"]])
-  .args[["layers"]] <- cast_nullable_integer_list(.args[["layers"]])
-  .args[["seed"]] <- cast_nullable_scalar_integer(.args[["seed"]])
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["block_size"]] <- cast_scalar_integer(.args[["block_size"]])
-  .args[["initial_weights"]] <- cast_nullable_double_list(.args[["initial_weights"]])
-  .args[["solver"]] <- cast_choice(.args[["solver"]], c("l-bfgs", "gd"))
-  .args
+validator_ml_multilayer_perceptron_classifier <- function(args) {
+  args <- ml_backwards_compatibility(args, list(iter.max = "max_iter"))
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["step_size"]] <- cast_scalar_double(args[["step_size"]])
+  args[["layers"]] <- cast_nullable_integer_list(args[["layers"]])
+  args[["seed"]] <- cast_nullable_scalar_integer(args[["seed"]])
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["block_size"]] <- cast_scalar_integer(args[["block_size"]])
+  args[["initial_weights"]] <- cast_nullable_double_list(args[["initial_weights"]])
+  args[["solver"]] <- cast_choice(args[["solver"]], c("l-bfgs", "gd"))
+  args
 }
 
 new_ml_multilayer_perceptron_classifier <- function(jobj) {

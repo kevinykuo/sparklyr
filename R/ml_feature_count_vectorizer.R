@@ -40,7 +40,7 @@ ft_count_vectorizer.spark_connection <- function(x, input_col = NULL, output_col
                                                  binary = FALSE, min_df = 1, min_tf = 1,
                                                  vocab_size = 2^18, dataset = NULL,
                                                  uid = random_string("count_vectorizer_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     binary = binary,
@@ -54,12 +54,12 @@ ft_count_vectorizer.spark_connection <- function(x, input_col = NULL, output_col
 
   estimator <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.CountVectorizer",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    jobj_set_param("setBinary", .args[["binary"]], "2.0.0", FALSE) %>%
-    invoke("setMinDF", .args[["min_df"]]) %>%
-    invoke("setMinTF", .args[["min_tf"]]) %>%
-    invoke("setVocabSize", .args[["vocab_size"]]) %>%
+    jobj_set_param("setBinary", args[["binary"]], "2.0.0", FALSE) %>%
+    invoke("setMinDF", args[["min_df"]]) %>%
+    invoke("setMinTF", args[["min_tf"]]) %>%
+    invoke("setVocabSize", args[["vocab_size"]]) %>%
     new_ml_count_vectorizer()
 
   if (is.null(dataset))
@@ -133,17 +133,17 @@ ml_vocabulary <- function(model) {
   unlist(model$vocabulary)
 }
 
-validator_ml_count_vectorizer <- function(.args) {
-  .args <- validate_args_transformer(.args) %>%
+validator_ml_count_vectorizer <- function(args) {
+  args <- validateargs_transformer(args) %>%
     ml_backwards_compatibility(
       list(min.df = "min_df",
            min.tf = "min_tf",
            vocab.size = "vocab_size")
     )
 
-  .args[["binary"]] <- cast_scalar_logical(.args[["binary"]])
-  .args[["min_df"]] <- cast_scalar_double(.args[["min_df"]])
-  .args[["min_tf"]] <- cast_scalar_double(.args[["min_tf"]])
-  .args[["vocab_size"]] <- cast_scalar_integer(.args[["vocab_size"]])
-  .args
+  args[["binary"]] <- cast_scalar_logical(args[["binary"]])
+  args[["min_df"]] <- cast_scalar_double(args[["min_df"]])
+  args[["min_tf"]] <- cast_scalar_double(args[["min_tf"]])
+  args[["vocab_size"]] <- cast_scalar_integer(args[["vocab_size"]])
+  args
 }

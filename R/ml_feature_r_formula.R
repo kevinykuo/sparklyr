@@ -60,7 +60,7 @@ ft_r_formula.spark_connection <- function(x, formula = NULL, features_col = "fea
                                           force_index_label = FALSE, dataset = NULL,
                                           uid = random_string("r_formula_"), ...) {
 
-  .args <- list(
+  args <- list(
     formula = formula,
     features_col = features_col,
     label_col = label_col,
@@ -70,11 +70,11 @@ ft_r_formula.spark_connection <- function(x, formula = NULL, features_col = "fea
     c(rlang::dots_list(...)) %>%
     validator_ml_r_formula()
 
-  estimator <- invoke_new(x, "org.apache.spark.ml.feature.RFormula", .args[["uid"]]) %>%
-    invoke("setFeaturesCol", .args[["features_col"]]) %>%
-    jobj_set_param("setFormula", .args[["formula"]]) %>%
-    invoke("setLabelCol", .args[["label_col"]]) %>%
-    jobj_set_param("setForceIndexLabel", .args[["force_index_label"]], "2.1.0", FALSE) %>%
+  estimator <- invoke_new(x, "org.apache.spark.ml.feature.RFormula", args[["uid"]]) %>%
+    invoke("setFeaturesCol", args[["features_col"]]) %>%
+    jobj_set_param("setFormula", args[["formula"]]) %>%
+    invoke("setLabelCol", args[["label_col"]]) %>%
+    jobj_set_param("setForceIndexLabel", args[["force_index_label"]], "2.1.0", FALSE) %>%
     new_ml_r_formula()
 
   if (is.null(dataset))
@@ -140,12 +140,12 @@ new_ml_r_formula_model <- function(jobj) {
 
 # Validator
 
-validator_ml_r_formula <- function(.args) {
-  if (rlang::is_formula(.args[["formula"]]))
-    .args[["formula"]] <- rlang::expr_text(.args[["formula"]], width = 500L)
-  .args[["formula"]] <- cast_nullable_string(.args[["formula"]])
-  .args[["features_col"]] <- cast_string(.args[["features_col"]])
-  .args[["label_col"]] <- cast_string(.args[["label_col"]])
-  .args[["force_index_label"]] <- cast_scalar_logical(.args[["force_index_label"]])
-  .args
+validator_ml_r_formula <- function(args) {
+  if (rlang::is_formula(args[["formula"]]))
+    args[["formula"]] <- rlang::expr_text(args[["formula"]], width = 500L)
+  args[["formula"]] <- cast_nullable_string(args[["formula"]])
+  args[["features_col"]] <- cast_string(args[["features_col"]])
+  args[["label_col"]] <- cast_string(args[["label_col"]])
+  args[["force_index_label"]] <- cast_scalar_logical(args[["force_index_label"]])
+  args
 }

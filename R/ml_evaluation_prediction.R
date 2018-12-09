@@ -73,7 +73,7 @@ ml_binary_classification_evaluator.spark_connection <- function(x, label_col = "
                                                                 metric_name = "areaUnderROC",
                                                                 uid = random_string("binary_classification_evaluator_"), ...) {
 
-  .args <- list(
+  args <- list(
     label_col = label_col,
     raw_prediction_col = raw_prediction_col,
     metric_name = metric_name
@@ -81,9 +81,9 @@ ml_binary_classification_evaluator.spark_connection <- function(x, label_col = "
     validator_ml_binary_classification_evaluator()
 
   spark_pipeline_stage(x, "org.apache.spark.ml.evaluation.BinaryClassificationEvaluator", uid) %>%
-    invoke("setLabelCol", .args[["label_col"]]) %>%
-    invoke("setRawPredictionCol", .args[["raw_prediction_col"]]) %>%
-    invoke("setMetricName", .args[["metric_name"]]) %>%
+    invoke("setLabelCol", args[["label_col"]]) %>%
+    invoke("setRawPredictionCol", args[["raw_prediction_col"]]) %>%
+    invoke("setMetricName", args[["metric_name"]]) %>%
     new_ml_evaluator()
 }
 
@@ -105,18 +105,18 @@ ml_binary_classification_evaluator.tbl_spark <- function(x, label_col = "label",
 }
 
 # Validator
-validator_ml_binary_classification_evaluator <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_binary_classification_evaluator <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     predicted_tbl_spark = "x",
     label = "label_col",
     score = "raw_prediction_col",
     metric = "metric_name"
   ))
 
-  .args[["label_col"]] <- cast_string(.args[["label_col"]])
-  .args[["raw_prediction_col"]] <- cast_string(.args[["raw_prediction_col"]])
-  .args[["metric_name"]] <- cast_choice(.args[["metric_name"]], c("areaUnderROC", "areaUnderPR"))
-  .args
+  args[["label_col"]] <- cast_string(args[["label_col"]])
+  args[["raw_prediction_col"]] <- cast_string(args[["raw_prediction_col"]])
+  args[["metric_name"]] <- cast_choice(args[["metric_name"]], c("areaUnderROC", "areaUnderPR"))
+  args
 }
 
 #' @rdname ml_evaluator
@@ -142,7 +142,7 @@ ml_multiclass_classification_evaluator.spark_connection <- function(x, label_col
                                                                     metric_name = "f1",
                                                                     uid = random_string("multiclass_classification_evaluator_"),
                                                                     ...) {
-  .args <- list(
+  args <- list(
     label_col = label_col,
     prediction_col = prediction_col,
     metric_name = metric_name
@@ -160,9 +160,9 @@ ml_multiclass_classification_evaluator.spark_connection <- function(x, label_col
   }
 
   spark_pipeline_stage(x, "org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator", uid) %>%
-    invoke("setLabelCol", .args[["label_col"]]) %>%
-    invoke("setPredictionCol", .args[["prediction_col"]]) %>%
-    invoke("setMetricName", .args[["metric_name"]]) %>%
+    invoke("setLabelCol", args[["label_col"]]) %>%
+    invoke("setPredictionCol", args[["prediction_col"]]) %>%
+    invoke("setMetricName", args[["metric_name"]]) %>%
     new_ml_evaluator()
 }
 
@@ -184,21 +184,21 @@ ml_multiclass_classification_evaluator.tbl_spark <- function(x, label_col = "lab
     ml_evaluate(x)
 }
 
-validator_ml_multiclass_classification_evaluator <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_multiclass_classification_evaluator <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     predicted_tbl_spark = "x",
     label = "label_col",
     predicted_lbl = "prediction_col",
     metric = "metric_name"
   ))
 
-  .args[["label_col"]] <- cast_string(.args[["label_col"]])
-  .args[["prediction_col"]] <- cast_string(.args[["prediction_col"]])
-  .args[["metric_name"]] <- cast_choice(
-    .args[["metric_name"]],
+  args[["label_col"]] <- cast_string(args[["label_col"]])
+  args[["prediction_col"]] <- cast_string(args[["prediction_col"]])
+  args[["metric_name"]] <- cast_choice(
+    args[["metric_name"]],
     c("f1", "precision", "recall", "weightedPrecision", "weightedRecall", "accuracy")
   )
-  .args
+  args
 }
 
 #' @rdname ml_evaluator
@@ -219,7 +219,7 @@ ml_regression_evaluator <- function(x, label_col = "label", prediction_col = "pr
 #' @export
 ml_regression_evaluator.spark_connection <- function(x, label_col = "label", prediction_col = "prediction", metric_name = "rmse",
                                                      uid = random_string("regression_evaluator_"), ...) {
-  .args <- list(
+  args <- list(
     label_col = label_col,
     prediction_col = prediction_col,
     metric_name = metric_name
@@ -227,9 +227,9 @@ ml_regression_evaluator.spark_connection <- function(x, label_col = "label", pre
     validator_ml_regression_evaluator()
 
   evaluator <- spark_pipeline_stage(x, "org.apache.spark.ml.evaluation.RegressionEvaluator", uid) %>%
-    invoke("setLabelCol", .args[["label_col"]]) %>%
-    invoke("setPredictionCol", .args[["prediction_col"]]) %>%
-    invoke("setMetricName", .args[["metric_name"]])  %>%
+    invoke("setLabelCol", args[["label_col"]]) %>%
+    invoke("setPredictionCol", args[["prediction_col"]]) %>%
+    invoke("setMetricName", args[["metric_name"]])  %>%
     new_ml_evaluator()
 
   evaluator
@@ -249,11 +249,11 @@ ml_regression_evaluator.tbl_spark <- function(x, label_col = "label", prediction
     ml_evaluate(x)
 }
 
-validator_ml_regression_evaluator <- function(.args) {
-  .args[["label_col"]] <- cast_string(.args[["label_col"]])
-  .args[["prediction_col"]] <- cast_string(.args[["prediction_col"]])
-  .args[["metric_name"]] <- cast_choice(.args[["metric_name"]], c("rmse", "mse", "r2", "mae"))
-  .args
+validator_ml_regression_evaluator <- function(args) {
+  args[["label_col"]] <- cast_string(args[["label_col"]])
+  args[["prediction_col"]] <- cast_string(args[["prediction_col"]])
+  args[["metric_name"]] <- cast_choice(args[["metric_name"]], c("rmse", "mse", "r2", "mae"))
+  args
 }
 
 new_ml_binary_classification_evaluator <- function(jobj) {

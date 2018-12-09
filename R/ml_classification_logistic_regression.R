@@ -64,7 +64,7 @@ ml_logistic_regression.spark_connection <- function(x, formula = NULL, fit_inter
                                                     prediction_col = "prediction", probability_col = "probability",
                                                     raw_prediction_col = "rawPrediction",
                                                     uid = random_string("logistic_regression_"), ...) {
-  .args <- list(
+  args <- list(
     formula = formula,
     fit_intercept = fit_intercept,
     elastic_net_param = elastic_net_param,
@@ -91,39 +91,39 @@ ml_logistic_regression.spark_connection <- function(x, formula = NULL, fit_inter
     validator_ml_logistic_regression()
 
   jobj <- spark_pipeline_stage(
-    x, "org.apache.spark.ml.classification.LogisticRegression", .args[["uid"]],
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]], probability_col = .args[["probability_col"]],
-    raw_prediction_col = .args[["raw_prediction_col"]]
+    x, "org.apache.spark.ml.classification.LogisticRegression", args[["uid"]],
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]], probability_col = args[["probability_col"]],
+    raw_prediction_col = args[["raw_prediction_col"]]
   ) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setElasticNetParam", .args[["elastic_net_param"]]) %>%
-    invoke("setRegParam", .args[["reg_param"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setThreshold", .args[["threshold"]]) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    jobj_set_param("setFamily", .args[["family"]], "2.1.0", "auto") %>%
-    jobj_set_param("setAggregationDepth", .args[["aggregation_depth"]], "2.1.0", 2) %>%
-    jobj_set_param("setThresholds", .args[["thresholds"]]) %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]]) %>%
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setElasticNetParam", args[["elastic_net_param"]]) %>%
+    invoke("setRegParam", args[["reg_param"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setThreshold", args[["threshold"]]) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    jobj_set_param("setFamily", args[["family"]], "2.1.0", "auto") %>%
+    jobj_set_param("setAggregationDepth", args[["aggregation_depth"]], "2.1.0", 2) %>%
+    jobj_set_param("setThresholds", args[["thresholds"]]) %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]]) %>%
     jobj_set_param(
       "setLowerBoundsOnCoefficients",
-      spark_dense_matrix(x, .args[["lower_bounds_on_coefficients"]]),
+      spark_dense_matrix(x, args[["lower_bounds_on_coefficients"]]),
       "2.2.0"
     ) %>%
     jobj_set_param(
       "setUpperBoundsOnCoefficients",
-      spark_dense_matrix(x, .args[["upper_bounds_on_coefficients"]]),
+      spark_dense_matrix(x, args[["upper_bounds_on_coefficients"]]),
       "2.2.0"
     ) %>%
     jobj_set_param(
       "setLowerBoundsOnIntercepts",
-      spark_dense_vector(x, .args[["lower_bounds_on_intercepts"]]),
+      spark_dense_vector(x, args[["lower_bounds_on_intercepts"]]),
       "2.2.0"
     ) %>%
     jobj_set_param(
       "setUpperBoundsOnIntercepts",
-      spark_dense_vector(x, .args[["upper_bounds_on_intercepts"]]),
+      spark_dense_vector(x, args[["upper_bounds_on_intercepts"]]),
       "2.2.0"
     )
 
@@ -293,9 +293,9 @@ cast_double_matrix <- function(mat) {
     matrix(nrow = nrow(mat))
 }
 
-validator_ml_logistic_regression <- function(.args) {
-  .args <- ml_backwards_compatibility(
-    .args, list(
+validator_ml_logistic_regression <- function(args) {
+  args <- ml_backwards_compatibility(
+    args, list(
       intercept = "fit_intercept",
       alpha = "elastic_net_param",
       lambda = "reg_param",
@@ -303,21 +303,21 @@ validator_ml_logistic_regression <- function(.args) {
       iter.max = "max_iter",
       max.iter = "max_iter"
     )) %>%
-    validate_args_classifier()
+    validateargs_classifier()
 
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args[["elastic_net_param"]] <- cast_scalar_double(.args[["elastic_net_param"]])
-  .args[["reg_param"]] <- cast_scalar_double(.args[["reg_param"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["family"]] <- cast_choice(.args[["family"]], c("auto", "binomial", "multinomial"))
-  .args[["fit_intercept"]] <- cast_scalar_logical(.args[["fit_intercept"]])
-  .args[["threshold"]] <- cast_scalar_double(.args[["threshold"]])
-  .args[["thresholds"]] <- cast_nullable_double_list(.args[["thresholds"]])
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args[["aggregation_depth"]] <- cast_scalar_integer(.args[["aggregation_depth"]])
-  .args[["lower_bounds_on_coefficients"]] <- cast_double_matrix(.args[["lower_bounds_on_coefficients"]])
-  .args[["upper_bounds_on_coefficients"]] <- cast_double_matrix(.args[["upper_bounds_on_coefficients"]])
-  .args[["lower_bounds_on_intercepts"]] <- cast_nullable_double_list(.args[["lower_bounds_on_intercepts"]])
-  .args[["upper_bounds_on_intercepts"]] <- cast_nullable_double_list(.args[["upper_bounds_on_intercepts"]])
-  .args
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args[["elastic_net_param"]] <- cast_scalar_double(args[["elastic_net_param"]])
+  args[["reg_param"]] <- cast_scalar_double(args[["reg_param"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["family"]] <- cast_choice(args[["family"]], c("auto", "binomial", "multinomial"))
+  args[["fit_intercept"]] <- cast_scalar_logical(args[["fit_intercept"]])
+  args[["threshold"]] <- cast_scalar_double(args[["threshold"]])
+  args[["thresholds"]] <- cast_nullable_double_list(args[["thresholds"]])
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args[["aggregation_depth"]] <- cast_scalar_integer(args[["aggregation_depth"]])
+  args[["lower_bounds_on_coefficients"]] <- cast_double_matrix(args[["lower_bounds_on_coefficients"]])
+  args[["upper_bounds_on_coefficients"]] <- cast_double_matrix(args[["upper_bounds_on_coefficients"]])
+  args[["lower_bounds_on_intercepts"]] <- cast_nullable_double_list(args[["lower_bounds_on_intercepts"]])
+  args[["upper_bounds_on_intercepts"]] <- cast_nullable_double_list(args[["upper_bounds_on_intercepts"]])
+  args
 }

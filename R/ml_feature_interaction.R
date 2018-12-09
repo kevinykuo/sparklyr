@@ -20,7 +20,7 @@ ml_interaction <- ft_interaction
 #' @export
 ft_interaction.spark_connection <- function(x, input_cols = NULL, output_col = NULL,
                                             uid = random_string("interaction_"), ...) {
-  .args <- list(
+  args <- list(
     input_cols = input_cols,
     output_col = output_col,
     uid = uid
@@ -30,7 +30,7 @@ ft_interaction.spark_connection <- function(x, input_cols = NULL, output_col = N
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.Interaction",
-    input_cols = .args[["input_cols"]], output_col = .args[["output_col"]], uid = .args[["uid"]])
+    input_cols = args[["input_cols"]], output_col = args[["output_col"]], uid = args[["uid"]])
 
   new_ml_interaction(jobj)
 }
@@ -67,12 +67,12 @@ new_ml_interaction <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_interaction")
 }
 
-validator_ml_interaction <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_interaction <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     input.col = "input_cols",
     output.col = "output_col"
   ))
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_col"]] <- cast_nullable_string(.args[["output_col"]])
-  .args
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_col"]] <- cast_nullable_string(args[["output_col"]])
+  args
 }

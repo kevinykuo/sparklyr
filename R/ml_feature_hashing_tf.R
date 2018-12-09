@@ -22,7 +22,7 @@ ml_hashing_tf <- ft_hashing_tf
 ft_hashing_tf.spark_connection <- function(x, input_col = NULL, output_col = NULL, binary = FALSE,
                                            num_features = 2^18, uid = random_string("hashing_tf_"), ...) {
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     binary = binary,
@@ -34,9 +34,9 @@ ft_hashing_tf.spark_connection <- function(x, input_col = NULL, output_col = NUL
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.HashingTF",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]) %>%
-    jobj_set_param("setBinary", .args[["binary"]], "2.0.0", FALSE) %>%
-    invoke("setNumFeatures", .args[["num_features"]])
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]) %>%
+    jobj_set_param("setBinary", args[["binary"]], "2.0.0", FALSE) %>%
+    invoke("setNumFeatures", args[["num_features"]])
 
   new_ml_hashing_tf(jobj)
 }
@@ -75,9 +75,9 @@ new_ml_hashing_tf <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_hashing_tf")
 }
 
-validator_ml_hashing_tf <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["binary"]] <- cast_scalar_logical(.args[["binary"]])
-  .args[["num_features"]] <- cast_scalar_integer(.args[["num_features"]])
-  .args
+validator_ml_hashing_tf <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["binary"]] <- cast_scalar_logical(args[["binary"]])
+  args[["num_features"]] <- cast_scalar_integer(args[["num_features"]])
+  args
 }

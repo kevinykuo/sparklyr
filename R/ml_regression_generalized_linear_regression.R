@@ -81,7 +81,7 @@ ml_generalized_linear_regression.spark_connection <- function(x, formula = NULL,
                                                               ...) {
   spark_require_version(x, "2.0.0", "GeneralizedLinearRegression")
 
-  .args <- list(
+  args <- list(
     family = family,
     link = link,
     fit_intercept = fit_intercept,
@@ -103,21 +103,21 @@ ml_generalized_linear_regression.spark_connection <- function(x, formula = NULL,
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.GeneralizedLinearRegression", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setFamily", .args[["family"]]) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setRegParam", .args[["reg_param"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setSolver", .args[["solver"]]) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    jobj_set_param("setLinkPower", .args[["link_power"]]) %>%
-    jobj_set_param("setVariancePower", .args[["variance_power"]]) %>%
-    jobj_set_param("setLink", .args[["link"]]) %>%
-    jobj_set_param("setLinkPredictionCol", .args[["link_prediction_col"]]) %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]]) %>%
-    jobj_set_param("setOffsetCol", .args[["offset_col"]], "2.3.0")
+    invoke("setFamily", args[["family"]]) %>%
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setRegParam", args[["reg_param"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setSolver", args[["solver"]]) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    jobj_set_param("setLinkPower", args[["link_power"]]) %>%
+    jobj_set_param("setVariancePower", args[["variance_power"]]) %>%
+    jobj_set_param("setLink", args[["link"]]) %>%
+    jobj_set_param("setLinkPredictionCol", args[["link_prediction_col"]]) %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]]) %>%
+    jobj_set_param("setOffsetCol", args[["offset_col"]], "2.3.0")
 
   new_ml_generalized_linear_regression(jobj)
 }
@@ -209,37 +209,37 @@ ml_generalized_linear_regression.tbl_spark <- function(x, formula = NULL, family
   }
 }
 
-validator_ml_generalized_linear_regression <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_generalized_linear_regression <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     intercept = "fit_intercept",
     weights.column = "weight_col",
     iter.max = "max_iter",
     max.iter = "max_iter"
   ))
-  .args[["reg_param"]] <- cast_scalar_double(.args[["reg_param"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  fam <- .args[["family"]]
+  args[["reg_param"]] <- cast_scalar_double(args[["reg_param"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  fam <- args[["family"]]
   if (is.function(fam)) {
     warning("Specifying a function for `family` is deprecated; please specify strings for `family` and `link`.")
     fam <- fam()
-    .args[["link"]] <- cast_string(fam$link)
-    .args[["family"]] <- cast_string(fam$family)
+    args[["link"]] <- cast_string(fam$link)
+    args[["family"]] <- cast_string(fam$family)
   } else if (inherits(fam, "family")) {
-    .args[["link"]] <- cast_string(fam$link)
-    .args[["family"]] <- cast_string(fam$family)
+    args[["link"]] <- cast_string(fam$link)
+    args[["family"]] <- cast_string(fam$family)
   } else {
-    .args[["family"]] <- cast_choice(fam, c("gaussian", "binomial", "poisson", "gamma", "tweedie"))
-    .args[["link"]] <- cast_nullable_string(.args[["link"]])
+    args[["family"]] <- cast_choice(fam, c("gaussian", "binomial", "poisson", "gamma", "tweedie"))
+    args[["link"]] <- cast_nullable_string(args[["link"]])
   }
-  .args[["fit_intercept"]] <- cast_scalar_logical(.args[["fit_intercept"]])
-  .args[["solver"]] <- cast_choice(.args[["solver"]], "irls")
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["offset_col"]] <- cast_nullable_string(.args[["offset_col"]])
-  .args[["link_power"]] <- cast_nullable_scalar_double(.args[["link_power"]])
-  .args[["variance_power"]] <- cast_nullable_scalar_double(.args[["variance_power"]])
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args[["link_prediction_col"]] <- cast_nullable_string(.args[["link_prediction_col"]])
-  .args
+  args[["fit_intercept"]] <- cast_scalar_logical(args[["fit_intercept"]])
+  args[["solver"]] <- cast_choice(args[["solver"]], "irls")
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["offset_col"]] <- cast_nullable_string(args[["offset_col"]])
+  args[["link_power"]] <- cast_nullable_scalar_double(args[["link_power"]])
+  args[["variance_power"]] <- cast_nullable_scalar_double(args[["variance_power"]])
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args[["link_prediction_col"]] <- cast_nullable_string(args[["link_prediction_col"]])
+  args
 }
 
 new_ml_generalized_linear_regression <- function(jobj) {

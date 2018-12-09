@@ -30,7 +30,7 @@ ft_word2vec.spark_connection <- function(x, input_col = NULL, output_col = NULL,
                                          max_sentence_length = 1000, num_partitions = 1, step_size = 0.025, max_iter = 1,
                                          seed = NULL, dataset = NULL, uid = random_string("word2vec_"), ...) {
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     vector_size = vector_size,
@@ -47,17 +47,17 @@ ft_word2vec.spark_connection <- function(x, input_col = NULL, output_col = NULL,
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.Word2Vec",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    invoke("setVectorSize", .args[["vector_size"]]) %>%
-    invoke("setMinCount", .args[["min_count"]]) %>%
-    invoke("setNumPartitions", .args[["num_partitions"]]) %>%
-    invoke("setStepSize", .args[["step_size"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    jobj_set_param("setMaxSentenceLength", .args[["max_sentence_length"]], "2.0.0", 1000)
+    invoke("setVectorSize", args[["vector_size"]]) %>%
+    invoke("setMinCount", args[["min_count"]]) %>%
+    invoke("setNumPartitions", args[["num_partitions"]]) %>%
+    invoke("setStepSize", args[["step_size"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    jobj_set_param("setMaxSentenceLength", args[["max_sentence_length"]], "2.0.0", 1000)
 
-  if (!is.null(.args[["seed"]]))
-    jobj <- invoke(jobj, "setSeed", .args[["seed"]])
+  if (!is.null(args[["seed"]]))
+    jobj <- invoke(jobj, "setSeed", args[["seed"]])
 
   estimator <- new_ml_word2vec(jobj)
 
@@ -136,16 +136,16 @@ new_ml_word2vec_model <- function(jobj) {
                      class = "ml_word2vec_model")
 }
 
-validator_ml_word2vec <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["vector_size"]] <- cast_scalar_integer(.args[["vector_size"]])
-  .args[["min_count"]] <- cast_scalar_integer(.args[["min_count"]])
-  .args[["max_sentence_length"]] <- cast_scalar_integer(.args[["max_sentence_length"]])
-  .args[["num_partitions"]] <- cast_scalar_integer(.args[["num_partitions"]])
-  .args[["step_size"]] <- cast_scalar_double(.args[["step_size"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["seed"]] <- cast_nullable_scalar_integer(.args[["seed"]])
-  .args
+validator_ml_word2vec <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["vector_size"]] <- cast_scalar_integer(args[["vector_size"]])
+  args[["min_count"]] <- cast_scalar_integer(args[["min_count"]])
+  args[["max_sentence_length"]] <- cast_scalar_integer(args[["max_sentence_length"]])
+  args[["num_partitions"]] <- cast_scalar_integer(args[["num_partitions"]])
+  args[["step_size"]] <- cast_scalar_double(args[["step_size"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["seed"]] <- cast_nullable_scalar_integer(args[["seed"]])
+  args
 }
 
 #' @rdname ft_word2vec

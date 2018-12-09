@@ -26,7 +26,7 @@ ml_gbt_classifier.spark_connection <- function(x, formula = NULL, max_iter = 20,
                                                raw_prediction_col = "rawPrediction",
                                                uid = random_string("gbt_classifier_"), ...) {
 
-  .args <- list(
+  args <- list(
     max_iter = max_iter,
     max_depth = max_depth,
     step_size = step_size,
@@ -55,32 +55,32 @@ ml_gbt_classifier.spark_connection <- function(x, formula = NULL, max_iter = 20,
   jobj <- (
     if (spark_version(x) < "2.2.0")
       spark_pipeline_stage(
-        x, stage_class, uid, features_col = .args[["features_col"]],
-        label_col = .args[["label_col"]], prediction_col = .args[["prediction_col"]]
+        x, stage_class, uid, features_col = args[["features_col"]],
+        label_col = args[["label_col"]], prediction_col = args[["prediction_col"]]
       )
     else
       spark_pipeline_stage(
-        x, stage_class, uid, features_col = .args[["features_col"]],
-        label_col = .args[["label_col"]],
-        prediction_col = .args[["prediction_col"]],
-        probability_col = .args[["probability_col"]],
-        raw_prediction_col = .args[["raw_prediction_col"]]
+        x, stage_class, uid, features_col = args[["features_col"]],
+        label_col = args[["label_col"]],
+        prediction_col = args[["prediction_col"]],
+        probability_col = args[["probability_col"]],
+        raw_prediction_col = args[["raw_prediction_col"]]
       )
   ) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
-    invoke("setMaxBins", .args[["max_bins"]]) %>%
-    invoke("setMaxDepth", .args[["max_depth"]]) %>%
-    invoke("setMinInfoGain", .args[["min_info_gain"]]) %>%
-    invoke("setMinInstancesPerNode", .args[["min_instances_per_node"]]) %>%
-    invoke("setCacheNodeIds", .args[["cache_node_ids"]]) %>%
-    invoke("setMaxMemoryInMB", .args[["max_memory_in_mb"]]) %>%
-    invoke("setLossType", .args[["loss_type"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setStepSize", .args[["step_size"]]) %>%
-    invoke("setSubsamplingRate", .args[["subsampling_rate"]]) %>%
-    jobj_set_param("setFeatureSubsetStrategy", .args[["feature_subset_strategy"]], "2.3.0", "auto") %>%
-    jobj_set_param("setThresholds", .args[["thresholds"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
+    invoke("setMaxBins", args[["max_bins"]]) %>%
+    invoke("setMaxDepth", args[["max_depth"]]) %>%
+    invoke("setMinInfoGain", args[["min_info_gain"]]) %>%
+    invoke("setMinInstancesPerNode", args[["min_instances_per_node"]]) %>%
+    invoke("setCacheNodeIds", args[["cache_node_ids"]]) %>%
+    invoke("setMaxMemoryInMB", args[["max_memory_in_mb"]]) %>%
+    invoke("setLossType", args[["loss_type"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setStepSize", args[["step_size"]]) %>%
+    invoke("setSubsamplingRate", args[["subsampling_rate"]]) %>%
+    jobj_set_param("setFeatureSubsetStrategy", args[["feature_subset_strategy"]], "2.3.0", "auto") %>%
+    jobj_set_param("setThresholds", args[["thresholds"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   new_ml_gbt_classifier(jobj)
 }
@@ -182,24 +182,24 @@ ml_gbt_classifier.tbl_spark <- function(x, formula = NULL, max_iter = 20, max_de
 }
 
 # Validator
-validator_ml_gbt_classifier <- function(.args) {
-  .args <- ml_backwards_compatibility(
-    .args,
+validator_ml_gbt_classifier <- function(args) {
+  args <- ml_backwards_compatibility(
+    args,
     list(
       num.trees = "max_iter",
       loss.type = "loss_type",
       sample.rate = "subsampling_rate"
     )
   ) %>%
-    ml_validate_decision_tree_args()
+    ml_validate_decision_treeargs()
 
-  .args[["thresholds"]] <- cast_nullable_double_list(.args[["thresholds"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["step_size"]] <- cast_scalar_double(.args[["step_size"]])
-  .args[["subsampling_rate"]] <- cast_scalar_double(.args[["subsampling_rate"]])
-  .args[["loss_type"]] <- cast_choice(.args[["loss_type"]], "logistic")
-  .args[["feature_subset_strategy"]] <- cast_string(.args[["feature_subset_strategy"]])
-  .args
+  args[["thresholds"]] <- cast_nullable_double_list(args[["thresholds"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["step_size"]] <- cast_scalar_double(args[["step_size"]])
+  args[["subsampling_rate"]] <- cast_scalar_double(args[["subsampling_rate"]])
+  args[["loss_type"]] <- cast_choice(args[["loss_type"]], "logistic")
+  args[["feature_subset_strategy"]] <- cast_string(args[["feature_subset_strategy"]])
+  args
 }
 
 new_ml_gbt_classifier <- function(jobj) {

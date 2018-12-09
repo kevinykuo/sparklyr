@@ -38,7 +38,7 @@ ft_min_max_scaler.spark_connection <- function(x, input_col = NULL, output_col =
                                                min = 0, max = 1, dataset = NULL,
                                                uid = random_string("min_max_scaler_"), ...) {
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     min = min,
@@ -50,10 +50,10 @@ ft_min_max_scaler.spark_connection <- function(x, input_col = NULL, output_col =
 
   estimator <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.MinMaxScaler",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    invoke("setMin", .args[["min"]]) %>%
-    invoke("setMax", .args[["max"]]) %>%
+    invoke("setMin", args[["min"]]) %>%
+    invoke("setMax", args[["max"]]) %>%
     new_ml_min_max_scaler()
 
   if (is.null(dataset))
@@ -111,9 +111,9 @@ new_ml_min_max_scaler_model <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_min_max_scaler_model")
 }
 
-validator_ml_min_max_scaler <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["min"]] <- cast_scalar_double(.args[["min"]])
-  .args[["max"]] <- cast_scalar_double(.args[["max"]])
-  .args
+validator_ml_min_max_scaler <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["min"]] <- cast_scalar_double(args[["min"]])
+  args[["max"]] <- cast_scalar_double(args[["max"]])
+  args
 }

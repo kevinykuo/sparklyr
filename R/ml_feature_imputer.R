@@ -30,7 +30,7 @@ ft_imputer.spark_connection <- function(x, input_cols = NULL, output_cols = NULL
                                         uid = random_string("imputer_"), ...) {
   spark_require_version(x, "2.2.0", "Imputer")
 
-  .args <- list(
+  args <- list(
     input_cols = input_cols,
     output_cols = output_cols,
     missing_value = missing_value,
@@ -42,9 +42,9 @@ ft_imputer.spark_connection <- function(x, input_cols = NULL, output_cols = NULL
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.Imputer",
-    input_cols = .args[["input_cols"]], output_cols = .args[["output_cols"]], uid = .args[["uid"]]) %>%
-    invoke("setStrategy", .args[["strategy"]]) %>%
-    jobj_set_param("setMissingValue", .args[["missing_value"]])
+    input_cols = args[["input_cols"]], output_cols = args[["output_cols"]], uid = args[["uid"]]) %>%
+    invoke("setStrategy", args[["strategy"]]) %>%
+    jobj_set_param("setMissingValue", args[["missing_value"]])
 
   estimator <- new_ml_imputer(jobj)
 
@@ -91,12 +91,12 @@ ft_imputer.tbl_spark <- function(x, input_cols = NULL, output_cols = NULL,
     ml_fit_and_transform(stage, x)
 }
 
-validator_ml_imputer <- function(.args) {
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_cols"]] <- cast_nullable_string_list(.args[["output_cols"]])
-  .args[["strategy"]] <- cast_choice(.args[["strategy"]], c("mean", "median"))
-  .args[["missing_value"]] <- cast_nullable_scalar_double(.args[["missing_value"]])
-  .args
+validator_ml_imputer <- function(args) {
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_cols"]] <- cast_nullable_string_list(args[["output_cols"]])
+  args[["strategy"]] <- cast_choice(args[["strategy"]], c("mean", "median"))
+  args[["missing_value"]] <- cast_nullable_scalar_double(args[["missing_value"]])
+  args
 }
 
 new_ml_imputer <- function(jobj) {

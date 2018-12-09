@@ -50,7 +50,7 @@ ml_feature_hasher <- ft_feature_hasher
 ft_feature_hasher.spark_connection <- function(x, input_cols = NULL, output_col = NULL,
                                                num_features = 2^18, categorical_cols = NULL,
                                                uid = random_string("feature_hasher_"), ...) {
-  .args <- list(
+  args <- list(
     input_cols = input_cols,
     output_col = output_col,
     num_features = num_features,
@@ -62,9 +62,9 @@ ft_feature_hasher.spark_connection <- function(x, input_cols = NULL, output_col 
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.FeatureHasher",
-    input_cols = .args[["input_cols"]], output_col =.args[["output_col"]], uid = .args[["uid"]]) %>%
-    invoke("setNumFeatures", .args[["num_features"]]) %>%
-    jobj_set_param("setCategoricalCols", .args[["categorical_cols"]])
+    input_cols = args[["input_cols"]], output_col =args[["output_col"]], uid = args[["uid"]]) %>%
+    invoke("setNumFeatures", args[["num_features"]]) %>%
+    jobj_set_param("setCategoricalCols", args[["categorical_cols"]])
 
   new_ml_feature_hasher(jobj)
 }
@@ -105,11 +105,11 @@ new_ml_feature_hasher <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_feature_hasher")
 }
 
-validator_ml_feature_hasher <- function(.args) {
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_col"]] <- cast_nullable_string(.args[["output_col"]])
-  .args[["categorical_cols"]] <- cast_nullable_string_list(.args[["categorical_cols"]])
-  .args[["num_features"]] <- cast_scalar_integer(.args[["num_features"]])
-  .args[["uid"]] <- cast_scalar_character(.args[["uid"]])
-  .args
+validator_ml_feature_hasher <- function(args) {
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_col"]] <- cast_nullable_string(args[["output_col"]])
+  args[["categorical_cols"]] <- cast_nullable_string_list(args[["categorical_cols"]])
+  args[["num_features"]] <- cast_scalar_integer(args[["num_features"]])
+  args[["uid"]] <- cast_scalar_character(args[["uid"]])
+  args
 }

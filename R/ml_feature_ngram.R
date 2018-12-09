@@ -19,7 +19,7 @@ ml_ngram <- ft_ngram
 #' @export
 ft_ngram.spark_connection <- function(x, input_col = NULL, output_col = NULL, n = 2,
                                       uid = random_string("ngram_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     n = n,
@@ -30,9 +30,9 @@ ft_ngram.spark_connection <- function(x, input_col = NULL, output_col = NULL, n 
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.NGram",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    invoke("setN", .args[["n"]])
+    invoke("setN", args[["n"]])
 
   new_ml_ngram(jobj)
 }
@@ -70,8 +70,8 @@ new_ml_ngram <- function(jobj) {
   new_ml_transformer(jobj, class = "ml_ngram")
 }
 
-validator_ml_ngram <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["n"]] <- cast_scalar_integer(.args[["n"]])
-  .args
+validator_ml_ngram <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["n"]] <- cast_scalar_integer(args[["n"]])
+  args
 }

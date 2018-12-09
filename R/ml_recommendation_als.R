@@ -79,7 +79,7 @@ ml_als.spark_connection <- function(x, rating_col = "rating", user_col = "user",
                                     cold_start_strategy = "nan", intermediate_storage_level = "MEMORY_AND_DISK",
                                     final_storage_level = "MEMORY_AND_DISK", uid = random_string("als_"), ...) {
 
-  .args <- list(
+  args <- list(
     rating_col = rating_col,
     user_col = user_col,
     item_col = item_col,
@@ -99,28 +99,28 @@ ml_als.spark_connection <- function(x, rating_col = "rating", user_col = "user",
     validator_ml_als()
 
   jobj <- invoke_new(x, "org.apache.spark.ml.recommendation.ALS", uid) %>%
-    invoke("setRatingCol", .args[["rating_col"]]) %>%
-    invoke("setUserCol", .args[["user_col"]]) %>%
-    invoke("setItemCol", .args[["item_col"]]) %>%
-    invoke("setRank", .args[["rank"]]) %>%
-    invoke("setRegParam", .args[["reg_param"]]) %>%
-    invoke("setImplicitPrefs", .args[["implicit_prefs"]]) %>%
-    invoke("setAlpha", .args[["alpha"]]) %>%
-    invoke("setNonnegative", .args[["nonnegative"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setNumUserBlocks", .args[["num_user_blocks"]]) %>%
-    invoke("setNumItemBlocks", .args[["num_item_blocks"]]) %>%
-    invoke("setCheckpointInterval", .args[["checkpoint_interval"]]) %>%
+    invoke("setRatingCol", args[["rating_col"]]) %>%
+    invoke("setUserCol", args[["user_col"]]) %>%
+    invoke("setItemCol", args[["item_col"]]) %>%
+    invoke("setRank", args[["rank"]]) %>%
+    invoke("setRegParam", args[["reg_param"]]) %>%
+    invoke("setImplicitPrefs", args[["implicit_prefs"]]) %>%
+    invoke("setAlpha", args[["alpha"]]) %>%
+    invoke("setNonnegative", args[["nonnegative"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setNumUserBlocks", args[["num_user_blocks"]]) %>%
+    invoke("setNumItemBlocks", args[["num_item_blocks"]]) %>%
+    invoke("setCheckpointInterval", args[["checkpoint_interval"]]) %>%
     jobj_set_param(
-      "setIntermediateStorageLevel", .args[["intermediate_storage_level"]],
+      "setIntermediateStorageLevel", args[["intermediate_storage_level"]],
       "2.0.0", "MEMORY_AND_DISK"
     ) %>%
     jobj_set_param(
-      "setFinalStorageLevel", .args[["final_storage_level"]],
+      "setFinalStorageLevel", args[["final_storage_level"]],
       "2.0.0","MEMORY_AND_DISK"
     ) %>%
     jobj_set_param(
-      "setColdStartStrategy", .args[["cold_start_strategy"]],
+      "setColdStartStrategy", args[["cold_start_strategy"]],
       "2.2.0", "nan"
     )
 
@@ -191,8 +191,8 @@ ml_als.tbl_spark <- function(x, rating_col = "rating", user_col = "user", item_c
 }
 
 # Validator
-validator_ml_als <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_als <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     rating.column = "rating_col",
     user.column = "user_col",
     item.column = "item_col",
@@ -201,22 +201,22 @@ validator_ml_als <- function(.args) {
     iter.max = "max_iter"
   ))
 
-  .args[["rating_col"]] <- cast_string(.args[["rating_col"]])
-  .args[["user_col"]] <- cast_string(.args[["user_col"]])
-  .args[["item_col"]] <- cast_string(.args[["item_col"]])
-  .args[["rank"]] <- cast_scalar_integer(.args[["rank"]])
-  .args[["reg_param"]] <- cast_scalar_double(.args[["reg_param"]])
-  .args[["implicit_prefs"]] <- cast_scalar_logical(.args[["implicit_prefs"]])
-  .args[["alpha"]] <- cast_scalar_double(.args[["alpha"]])
-  .args[["nonnegative"]] <- cast_scalar_logical(.args[["nonnegative"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["num_user_blocks"]] <- cast_scalar_integer(.args[["num_user_blocks"]])
-  .args[["num_item_blocks"]] <- cast_scalar_integer(.args[["num_item_blocks"]])
-  .args[["checkpoint_interval"]] <- cast_scalar_integer(.args[["checkpoint_interval"]])
-  .args[["cold_start_strategy"]] <- cast_choice(.args[["cold_start_strategy"]], c("nan", "drop"))
-  .args[["intermediate_storage_level"]] <- cast_string(.args[["intermediate_storage_level"]])
-  .args[["final_storage_level"]] <- cast_string(.args[["final_storage_level"]])
-  .args
+  args[["rating_col"]] <- cast_string(args[["rating_col"]])
+  args[["user_col"]] <- cast_string(args[["user_col"]])
+  args[["item_col"]] <- cast_string(args[["item_col"]])
+  args[["rank"]] <- cast_scalar_integer(args[["rank"]])
+  args[["reg_param"]] <- cast_scalar_double(args[["reg_param"]])
+  args[["implicit_prefs"]] <- cast_scalar_logical(args[["implicit_prefs"]])
+  args[["alpha"]] <- cast_scalar_double(args[["alpha"]])
+  args[["nonnegative"]] <- cast_scalar_logical(args[["nonnegative"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["num_user_blocks"]] <- cast_scalar_integer(args[["num_user_blocks"]])
+  args[["num_item_blocks"]] <- cast_scalar_integer(args[["num_item_blocks"]])
+  args[["checkpoint_interval"]] <- cast_scalar_integer(args[["checkpoint_interval"]])
+  args[["cold_start_strategy"]] <- cast_choice(args[["cold_start_strategy"]], c("nan", "drop"))
+  args[["intermediate_storage_level"]] <- cast_string(args[["intermediate_storage_level"]])
+  args[["final_storage_level"]] <- cast_string(args[["final_storage_level"]])
+  args
 }
 
 # Constructors

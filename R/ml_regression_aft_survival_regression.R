@@ -57,7 +57,7 @@ ml_aft_survival_regression.spark_connection <- function(x, formula = NULL, censo
                                                         prediction_col = "prediction",
                                                         uid = random_string("aft_survival_regression_"), ...) {
 
-  .args <- list(
+  args <- list(
     censor_col = censor_col,
     quantile_probabilities = quantile_probabilities,
     fit_intercept = fit_intercept,
@@ -74,17 +74,17 @@ ml_aft_survival_regression.spark_connection <- function(x, formula = NULL, censo
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.AFTSurvivalRegression", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setMaxIter", .args[["max_iter"]]) %>%
-    invoke("setTol", .args[["tol"]]) %>%
-    invoke("setCensorCol", .args[["censor_col"]]) %>%
-    invoke("setFitIntercept", .args[["fit_intercept"]]) %>%
-    invoke("setQuantileProbabilities", .args[["quantile_probabilities"]]) %>%
-    jobj_set_param("setAggregationDepth", .args[["aggregation_depth"]], "2.1.0", 2) %>%
-    jobj_set_param("setQuantilesCol", .args[["quantiles_col"]])
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setMaxIter", args[["max_iter"]]) %>%
+    invoke("setTol", args[["tol"]]) %>%
+    invoke("setCensorCol", args[["censor_col"]]) %>%
+    invoke("setFitIntercept", args[["fit_intercept"]]) %>%
+    invoke("setQuantileProbabilities", args[["quantile_probabilities"]]) %>%
+    jobj_set_param("setAggregationDepth", args[["aggregation_depth"]], "2.1.0", 2) %>%
+    jobj_set_param("setQuantilesCol", args[["quantiles_col"]])
 
   new_ml_aft_survival_regression(jobj)
 }
@@ -163,22 +163,22 @@ ml_aft_survival_regression.tbl_spark <- function(x, formula = NULL, censor_col =
 }
 
 # Validator
-validator_ml_aft_survival_regression <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_aft_survival_regression <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     intercept = "fit_intercept",
     iter.max = "max_iter",
     max.iter = "max_iter"
   ))
 
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["fit_intercept"]] <- cast_scalar_logical(.args[["fit_intercept"]])
-  .args[["tol"]] <- cast_scalar_double(.args[["tol"]])
-  .args[["censor_col"]] <- cast_string(.args[["censor_col"]])
-  .args[["quantile_probabilities"]] <- cast_double_list(.args[["quantile_probabilities"]])
-  .args[["max_iter"]] <- cast_scalar_integer(.args[["max_iter"]])
-  .args[["aggregation_depth"]] <- cast_scalar_integer(.args[["aggregation_depth"]])
-  .args[["quantiles_col"]] <- cast_nullable_string(.args[["quantiles_col"]])
-  .args
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["fit_intercept"]] <- cast_scalar_logical(args[["fit_intercept"]])
+  args[["tol"]] <- cast_scalar_double(args[["tol"]])
+  args[["censor_col"]] <- cast_string(args[["censor_col"]])
+  args[["quantile_probabilities"]] <- cast_double_list(args[["quantile_probabilities"]])
+  args[["max_iter"]] <- cast_scalar_integer(args[["max_iter"]])
+  args[["aggregation_depth"]] <- cast_scalar_integer(args[["aggregation_depth"]])
+  args[["quantiles_col"]] <- cast_nullable_string(args[["quantiles_col"]])
+  args
 }
 
 # Constructors

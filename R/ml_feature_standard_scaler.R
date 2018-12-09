@@ -40,7 +40,7 @@ ml_standard_scaler <- ft_standard_scaler
 ft_standard_scaler.spark_connection <- function(x, input_col = NULL, output_col = NULL,
                                                 with_mean = FALSE, with_std = TRUE, dataset = NULL,
                                                 uid = random_string("standard_scaler_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     with_mean = with_mean,
@@ -52,10 +52,10 @@ ft_standard_scaler.spark_connection <- function(x, input_col = NULL, output_col 
 
   estimator <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.StandardScaler",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    invoke("setWithMean", .args[["with_mean"]]) %>%
-    invoke("setWithStd", .args[["with_std"]]) %>%
+    invoke("setWithMean", args[["with_mean"]]) %>%
+    invoke("setWithStd", args[["with_std"]]) %>%
     new_ml_standard_scaler()
 
   if (is.null(dataset))
@@ -115,9 +115,9 @@ new_ml_standard_scaler_model <- function(jobj) {
     class = "ml_standard_scaler_model")
 }
 
-validator_ml_standard_scaler <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["with_mean"]] <- cast_scalar_logical(.args[["with_mean"]])
-  .args[["with_std"]] <- cast_scalar_logical(.args[["with_std"]])
-  .args
+validator_ml_standard_scaler <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["with_mean"]] <- cast_scalar_logical(args[["with_mean"]])
+  args[["with_std"]] <- cast_scalar_logical(args[["with_std"]])
+  args
 }

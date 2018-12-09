@@ -58,7 +58,7 @@ ft_quantile_discretizer.spark_connection <- function(x, input_col = NULL, output
                                                      input_cols = NULL, output_cols = NULL, num_buckets_array = NULL,
                                                      handle_invalid = "error", relative_error = 0.001, dataset = NULL,
                                                      uid = random_string("quantile_discretizer_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     num_buckets = num_buckets,
@@ -74,14 +74,14 @@ ft_quantile_discretizer.spark_connection <- function(x, input_col = NULL, output
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.QuantileDiscretizer",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]],
-    input_cols = .args[["input_cols"]], output_cols = .args[["output_cols"]],
-    uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]],
+    input_cols = args[["input_cols"]], output_cols = args[["output_cols"]],
+    uid = args[["uid"]]
   ) %>%
-    jobj_set_param("setHandleInvalid", .args[["handle_invalid"]], "2.1.0", "error") %>%
-    jobj_set_param("setRelativeError", .args[["relative_error"]], "2.0.0", 0.001) %>%
-    jobj_set_param("setNumBuckets", .args[["num_buckets"]]) %>%
-    jobj_set_param("setNumBucketsArray", .args[["num_buckets_array"]], "2.3.0")
+    jobj_set_param("setHandleInvalid", args[["handle_invalid"]], "2.1.0", "error") %>%
+    jobj_set_param("setRelativeError", args[["relative_error"]], "2.0.0", 0.001) %>%
+    jobj_set_param("setNumBuckets", args[["num_buckets"]]) %>%
+    jobj_set_param("setNumBucketsArray", args[["num_buckets_array"]], "2.3.0")
 
   estimator <- jobj %>%
     new_ml_quantile_discretizer()
@@ -144,26 +144,26 @@ new_ml_quantile_discretizer <- function(jobj) {
   new_ml_estimator(jobj, class = "ml_quantile_discretizer")
 }
 
-validator_ml_quantile_discretizer <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(
+validator_ml_quantile_discretizer <- function(args) {
+  args <- ml_backwards_compatibility(args, list(
     n.buckets = "num_buckets"
   )) %>%
     ml_backwards_compatibility()
 
-  .args[["uid"]] <- cast_scalar_character(.args[["uid"]])
+  args[["uid"]] <- cast_scalar_character(args[["uid"]])
 
-  if (!is.null(.args[["input_col"]]) && !is.null(.args[["input_cols"]]))
+  if (!is.null(args[["input_col"]]) && !is.null(args[["input_cols"]]))
     stop("Only one of `input_col` or `input_cols` may be specified.", call. = FALSE)
-  .args[["input_col"]] <- cast_nullable_string(.args[["input_col"]])
-  .args[["output_col"]] <- cast_nullable_string(.args[["output_col"]])
-  .args[["num_buckets"]] <- cast_scalar_integer(.args[["num_buckets"]])
-  .args[["input_cols"]] <- cast_nullable_string_list(.args[["input_cols"]])
-  .args[["output_cols"]] <- cast_nullable_string_list(.args[["output_cols"]])
-  .args[["num_buckets_array"]] <- cast_nullable_integer_list(.args[["num_buckets_array"]])
-  .args[["handle_invalid"]] <- cast_choice(
-    .args[["handle_invalid"]],
+  args[["input_col"]] <- cast_nullable_string(args[["input_col"]])
+  args[["output_col"]] <- cast_nullable_string(args[["output_col"]])
+  args[["num_buckets"]] <- cast_scalar_integer(args[["num_buckets"]])
+  args[["input_cols"]] <- cast_nullable_string_list(args[["input_cols"]])
+  args[["output_cols"]] <- cast_nullable_string_list(args[["output_cols"]])
+  args[["num_buckets_array"]] <- cast_nullable_integer_list(args[["num_buckets_array"]])
+  args[["handle_invalid"]] <- cast_choice(
+    args[["handle_invalid"]],
     c("error", "skip", "keep")
   )
-  .args[["relative_error"]] <- cast_scalar_double(.args[["relative_error"]])
-  .args
+  args[["relative_error"]] <- cast_scalar_double(args[["relative_error"]])
+  args
 }

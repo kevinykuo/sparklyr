@@ -15,7 +15,7 @@ ft_minhash_lsh.spark_connection <- function(x, input_col = NULL, output_col = NU
 
   spark_require_version(x, "2.1.0", "MinHashLSH")
 
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     num_hash_tables = num_hash_tables,
@@ -27,10 +27,10 @@ ft_minhash_lsh.spark_connection <- function(x, input_col = NULL, output_col = NU
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.MinHashLSH",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    invoke("setNumHashTables", .args[["num_hash_tables"]]) %>%
-    jobj_set_param("setSeed", .args[["seed"]])
+    invoke("setNumHashTables", args[["num_hash_tables"]]) %>%
+    jobj_set_param("setSeed", args[["seed"]])
 
   estimator <- new_ml_minhash_lsh(jobj)
 
@@ -92,9 +92,9 @@ new_ml_minhash_lsh_model <- function(jobj) {
     class = "ml_minhash_lsh_model")
 }
 
-validator_ml_minhash_lsh <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["num_hash_tables"]] <- cast_scalar_integer(.args[["num_hash_tables"]])
-  .args[["seed"]] <- cast_nullable_scalar_integer(.args[["seed"]])
-  .args
+validator_ml_minhash_lsh <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["num_hash_tables"]] <- cast_scalar_integer(args[["num_hash_tables"]])
+  args[["seed"]] <- cast_nullable_scalar_integer(args[["seed"]])
+  args
 }

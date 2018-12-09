@@ -87,10 +87,10 @@ ml_gradient_boosted_trees <- function(x, formula = NULL,
                     regression = ml_gbt_regressor,
                     classification = ml_gbt_classifier)
 
-  args <- c(as.list(environment()), list(...))
-  args$response <- NULL
-  args$features <- NULL
-  do.call(routine, args)
+ args <- c(as.list(environment()), list(...))
+ args$response <- NULL
+ args$features <- NULL
+  do.call(routine,args)
 }
 
 new_ml_model_gbt_classification <- function(pipeline_model, formula, dataset, label_col,

@@ -48,7 +48,7 @@ ml_naive_bayes.spark_connection <- function(x, formula = NULL, model_type = "mul
                                             raw_prediction_col = "rawPrediction",
                                             uid = random_string("naive_bayes_"), ...) {
 
-  .args <- list(
+  args <- list(
     model_type = model_type,
     smoothing = smoothing,
     thresholds = thresholds,
@@ -64,15 +64,15 @@ ml_naive_bayes.spark_connection <- function(x, formula = NULL, model_type = "mul
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.classification.NaiveBayes", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]],
-    probability_col = .args[["probability_col"]],
-    raw_prediction_col = .args[["raw_prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]],
+    probability_col = args[["probability_col"]],
+    raw_prediction_col = args[["raw_prediction_col"]]
   ) %>%
-    invoke("setSmoothing", .args[["smoothing"]]) %>%
-    invoke("setModelType", .args[["model_type"]]) %>%
-    jobj_set_param("setThresholds", .args[["thresholds"]]) %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]], "2.1.0")
+    invoke("setSmoothing", args[["smoothing"]]) %>%
+    invoke("setModelType", args[["model_type"]]) %>%
+    jobj_set_param("setThresholds", args[["thresholds"]]) %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]], "2.1.0")
 
   new_ml_naive_bayes(jobj)
 }
@@ -145,13 +145,13 @@ ml_naive_bayes.tbl_spark <- function(x, formula = NULL, model_type = "multinomia
 }
 
 # Validator
-validator_ml_naive_bayes <- function(.args) {
-  .args <- ml_backwards_compatibility(.args, list(lambda = "smoothing"))
-  .args[["thresholds"]] <- cast_nullable_double_list(.args[["thresholds"]])
-  .args[["smoothing"]] <- cast_scalar_double(.args[["smoothing"]])
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args[["model_type"]] <- cast_choice(.args[["model_type"]], c("multinomial", "bernoulli"))
-  .args
+validator_ml_naive_bayes <- function(args) {
+  args <- ml_backwards_compatibility(args, list(lambda = "smoothing"))
+  args[["thresholds"]] <- cast_nullable_double_list(args[["thresholds"]])
+  args[["smoothing"]] <- cast_scalar_double(args[["smoothing"]])
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args[["model_type"]] <- cast_choice(args[["model_type"]], c("multinomial", "bernoulli"))
+  args
 }
 
 new_ml_naive_bayes <- function(jobj) {

@@ -28,7 +28,7 @@ ml_string_indexer <- ft_string_indexer
 ft_string_indexer.spark_connection <- function(x, input_col = NULL, output_col = NULL,
                                                handle_invalid = "error", string_order_type = "frequencyDesc",
                                                dataset = NULL, uid = random_string("string_indexer_"), ...) {
-  .args <- list(
+  args <- list(
     input_col = input_col,
     output_col = output_col,
     handle_invalid = handle_invalid,
@@ -39,10 +39,10 @@ ft_string_indexer.spark_connection <- function(x, input_col = NULL, output_col =
 
   estimator <- spark_pipeline_stage(
     x, "org.apache.spark.ml.feature.StringIndexer",
-    input_col = .args[["input_col"]], output_col = .args[["output_col"]], uid = .args[["uid"]]
+    input_col = args[["input_col"]], output_col = args[["output_col"]], uid = args[["uid"]]
   ) %>%
-    jobj_set_param("setHandleInvalid", .args[["handle_invalid"]], "2.1.0", "error") %>%
-    jobj_set_param("setStringOrderType", .args[["string_order_type"]], "2.3.0",  "frequencyDesc") %>%
+    jobj_set_param("setHandleInvalid", args[["handle_invalid"]], "2.1.0", "error") %>%
+    jobj_set_param("setStringOrderType", args[["string_order_type"]], "2.3.0",  "frequencyDesc") %>%
     new_ml_string_indexer()
 
   if (is.null(dataset))
@@ -120,14 +120,14 @@ new_ml_string_indexer_model <- function(jobj) {
 #' @export
 ml_labels <- function(model) model$labels
 
-validator_ml_string_indexer <- function(.args) {
-  .args <- validate_args_transformer(.args)
-  .args[["handle_invalid"]] <- cast_choice(
-    .args[["handle_invalid"]], c("error", "skip", "keep")
+validator_ml_string_indexer <- function(args) {
+  args <- validateargs_transformer(args)
+  args[["handle_invalid"]] <- cast_choice(
+    args[["handle_invalid"]], c("error", "skip", "keep")
   )
-  .args[["string_order_type"]] <- cast_choice(
-    .args[["string_order_type"]],
+  args[["string_order_type"]] <- cast_choice(
+    args[["string_order_type"]],
     c("frequencyDesc", "frequencyAsc", "alphabetDesc", "alphabetAsc")
   )
-  .args
+  args
 }

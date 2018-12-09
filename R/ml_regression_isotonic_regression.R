@@ -42,7 +42,7 @@ ml_isotonic_regression.spark_connection <- function(x, formula = NULL, feature_i
                                                     label_col = "label", prediction_col = "prediction",
                                                     uid = random_string("isotonic_regression_"), ...) {
 
-  .args <- list(
+  args <- list(
     feature_index = feature_index,
     isotonic = isotonic,
     weight_col = weight_col,
@@ -55,12 +55,12 @@ ml_isotonic_regression.spark_connection <- function(x, formula = NULL, feature_i
 
   jobj <- spark_pipeline_stage(
     x, "org.apache.spark.ml.regression.IsotonicRegression", uid,
-    features_col = .args[["features_col"]], label_col = .args[["label_col"]],
-    prediction_col = .args[["prediction_col"]]
+    features_col = args[["features_col"]], label_col = args[["label_col"]],
+    prediction_col = args[["prediction_col"]]
   ) %>%
-    invoke("setFeatureIndex", .args[["feature_index"]]) %>%
-    invoke("setIsotonic", .args[["isotonic"]]) %>%
-    jobj_set_param("setWeightCol", .args[["weight_col"]])
+    invoke("setFeatureIndex", args[["feature_index"]]) %>%
+    invoke("setIsotonic", args[["isotonic"]]) %>%
+    jobj_set_param("setWeightCol", args[["weight_col"]])
 
   new_ml_isotonic_regression(jobj)
 }
@@ -123,11 +123,11 @@ ml_isotonic_regression.tbl_spark <- function(x, formula = NULL, feature_index = 
 }
 
 # Validator
-validator_ml_isotonic_regression <- function(.args) {
-  .args[["feature_index"]] <- cast_scalar_integer(.args[["feature_index"]])
-  .args[["isotonic"]] <- cast_scalar_logical(.args[["isotonic"]])
-  .args[["weight_col"]] <- cast_nullable_string(.args[["weight_col"]])
-  .args
+validator_ml_isotonic_regression <- function(args) {
+  args[["feature_index"]] <- cast_scalar_integer(args[["feature_index"]])
+  args[["isotonic"]] <- cast_scalar_logical(args[["isotonic"]])
+  args[["weight_col"]] <- cast_nullable_string(args[["weight_col"]])
+  args
 }
 
 new_ml_isotonic_regression <- function(jobj) {

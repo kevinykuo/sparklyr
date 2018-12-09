@@ -15,7 +15,7 @@ ml_train_validation_split.spark_connection <- function(x, estimator = NULL, esti
                                                        collect_sub_models = FALSE, parallelism = 1,
                                                        seed = NULL, uid = random_string("train_validation_split_"),
                                                        ...) {
-  .args <- list(
+  args <- list(
     estimator = estimator,
     estimator_param_maps = estimator_param_maps,
     evaluator = evaluator,
@@ -28,11 +28,11 @@ ml_train_validation_split.spark_connection <- function(x, estimator = NULL, esti
 
   ml_new_validator(
     x, "org.apache.spark.ml.tuning.TrainValidationSplit", uid,
-    .args[["estimator"]], .args[["evaluator"]], .args[["estimator_param_maps"]], .args[["seed"]]
+    args[["estimator"]], args[["evaluator"]], args[["estimator_param_maps"]], args[["seed"]]
   ) %>%
-    invoke("setTrainRatio", .args[["train_ratio"]]) %>%
-    jobj_set_param("setCollectSubModels", .args[["collect_sub_models"]], "2.3.0", FALSE) %>%
-    jobj_set_param("setParallelism", .args[["parallelism"]], "2.3.0", 1) %>%
+    invoke("setTrainRatio", args[["train_ratio"]]) %>%
+    jobj_set_param("setCollectSubModels", args[["collect_sub_models"]], "2.3.0", FALSE) %>%
+    jobj_set_param("setParallelism", args[["parallelism"]], "2.3.0", 1) %>%
     new_ml_train_validation_split()
 }
 
@@ -79,10 +79,10 @@ ml_train_validation_split.tbl_spark <- function(x, estimator = NULL, estimator_p
     ml_fit(x)
 }
 
-validator_ml_train_validation_split <- function(.args) {
-  .args <- validate_args_tuning(.args)
-  .args[["train_ratio"]] <- cast_scalar_double(.args[["train_ratio"]])
-  .args
+validator_ml_train_validation_split <- function(args) {
+  args <- validateargs_tuning(args)
+  args[["train_ratio"]] <- cast_scalar_double(args[["train_ratio"]])
+  args
 }
 
 new_ml_train_validation_split <- function(jobj) {

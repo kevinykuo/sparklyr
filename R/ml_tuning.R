@@ -79,13 +79,13 @@ ml_validate_params <- function(expanded_params, stage_jobjs, current_param_list)
         current_params_keep <- setdiff(current_param_names, input_param_names)
         default_params_keep <- setdiff(default_param_names, current_params_keep)
 
-        args_to_validate <- c(
+       args_to_validate <- c(
           params, current_params[current_params_keep], default_params[default_params_keep]
         )
 
         # Call the validator associated with the stage, and return the (validated)
         #   parameters the user specified.
-        do.call(ml_get_stage_validator(stage_jobj), list(.args = args_to_validate)) %>%
+        do.call(ml_get_stage_validator(stage_jobj), list(args =args_to_validate)) %>%
           `[`(input_param_names)
       })
     })  %>%
@@ -337,15 +337,15 @@ param_maps_to_df <- function(param_maps) {
     dplyr::bind_rows()
 }
 
-validate_args_tuning <- function(.args) {
-  .args[["collect_sub_models"]] <- cast_scalar_logical(.args[["collect_sub_models"]])
-  .args[["parallelism"]] <- cast_scalar_integer(.args[["parallelism"]])
-  .args[["seed"]] <- cast_nullable_scalar_integer(.args[["seed"]])
-  if (!is.null(.args[["estimator"]]) && !inherits(.args[["estimator"]], "ml_estimator"))
+validateargs_tuning <- function(args) {
+  args[["collect_sub_models"]] <- cast_scalar_logical(args[["collect_sub_models"]])
+  args[["parallelism"]] <- cast_scalar_integer(args[["parallelism"]])
+  args[["seed"]] <- cast_nullable_scalar_integer(args[["seed"]])
+  if (!is.null(args[["estimator"]]) && !inherits(args[["estimator"]], "ml_estimator"))
     stop("`estimator` must be an `ml_estimator`.")
-  if (!is.null(.args[["estimator_param_maps"]]) && !rlang::is_bare_list(.args[["estimator_param_maps"]]))
+  if (!is.null(args[["estimator_param_maps"]]) && !rlang::is_bare_list(args[["estimator_param_maps"]]))
     stop("`estimator_param_maps` must be a list.")
-  if (!is.null(.args[["evaluator"]]) && !inherits(.args[["evaluator"]], "ml_evaluator"))
+  if (!is.null(args[["evaluator"]]) && !inherits(args[["evaluator"]], "ml_evaluator"))
     stop("`evaluator` must be an `ml_evaluator`.")
-  .args
+  args
 }
